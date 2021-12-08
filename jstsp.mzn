@@ -1,0 +1,60 @@
+%% Job sequencing with tool switching.
+%% Given the set T of tools,
+%% the set J of jobs, 
+%% the requried set of tools for each of the jobs,
+%% and a capacity of magazine C -
+%% find the schedule of jobs that minimizes the tool switches.
+
+include "globals.mzn";
+
+%% Input
+int: J;
+int: T;
+set of int: TOOLS = 1..T;
+set of int: JOBS = 1..J;
+
+array[JOBS, TOOLS] of 0..1:  job_tools;
+
+int: C;      
+
+%% Decision vars
+array[JOBS] of var JOBS: schedule;
+
+constraint all_different(schedule);
+
+%% Magazine content
+array[JOBS, TOOLS] of var 0..1: magazine; 
+
+constraint forall(i in JOBS, j in TOOLS)(
+  magazine[i, j] >= job_tools[i, j]
+);
+
+constraint forall(i in JOBS)(
+  sum(row(magazine, i)) <= C
+);
+
+
+%% checks
+constraint schedule = [4, 2, 5, 3, 6, 1];
+
+var int: cost; 
+
+constraint cost = sum(i in 1..J-1)(switches(i));
+
+solve minimize cost;
+
+function var int: switches(var int: job) =
+         sum(t in TOOLS)(magazine[schedule[job + 1], t] > magazine[schedule[job], t]);
+
+%% Data (1st instance from da Silva et al, "Multicommodity flow model...."
+J = 6;
+T = 9;
+C = 4;
+
+job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
+                  | 1, 0, 1, 0, 1, 0, 0, 0, 0 
+                  | 0, 1, 0, 0, 0, 1, 1, 1, 0
+                  | 1, 0, 0, 0, 1, 0, 1, 0, 1
+                  | 0, 0, 1, 0, 1, 0, 0, 1, 0
+                  | 1, 1, 0, 1, 0, 0, 0, 0, 0
+        |]; 

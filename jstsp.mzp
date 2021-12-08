@@ -1,0 +1,14 @@
+{
+    "openFiles": [
+        "../../Documents/Books/math/discrete-optimization/minizinc/yuck-experiments/queens.mzn",
+        "jstsp.mzn"
+    ],
+    "openTab": 1,
+    "projectFiles": [
+        "../../Documents/Books/math/discrete-optimization/minizinc/yuck-experiments/queens.mzn",
+        "jstsp.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.minizinc.mip.cplex",
+    "selectedBuiltinConfigVersion": "12.10.0.0",
+    "version": 106
+}
