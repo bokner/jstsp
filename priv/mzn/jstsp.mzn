@@ -35,7 +35,7 @@ constraint forall(i in JOBS)(
 
 
 %% checks
-constraint schedule = [4, 2, 5, 3, 6, 1];
+% constraint schedule = [4, 2, 5, 3, 6, 1];
 
 var int: cost; 
 
@@ -46,15 +46,3 @@ solve minimize cost;
 function var int: switches(var int: job) =
          sum(t in TOOLS)(magazine[schedule[job + 1], t] > magazine[schedule[job], t]);
 
-%% Data (1st instance from da Silva et al, "Multicommodity flow model...."
-J = 6;
-T = 9;
-C = 4;
-
-job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
-                  | 1, 0, 1, 0, 1, 0, 0, 0, 0 
-                  | 0, 1, 0, 0, 0, 1, 1, 1, 0
-                  | 1, 0, 0, 0, 1, 0, 1, 0, 1
-                  | 0, 0, 1, 0, 1, 0, 0, 1, 0
-                  | 1, 1, 0, 1, 0, 0, 0, 0, 0
-        |]; 
