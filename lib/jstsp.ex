@@ -3,34 +3,66 @@ defmodule JSTSP do
   Module for solving JSTSP instances.
   """
 
+
+  def run(instance, opts \\ [])
+
+  def run(instance_file, opts) when is_binary(instance_file) do
+    instance_file
+    |> parse_instance()
+    |> run_model(opts)
+  end
+
+  def parse_instance(instance_file) do
+    parsed_data =
+    instance_file
+    |> File.read!()
+    |> String.split("\r\n", trim: true)
+    |> Enum.map(fn line ->
+      line
+      |> String.split(" ")
+      |> Enum.map(fn numstr -> String.to_integer(numstr) end)
+    end)
+    [[j, t, c] | job_tool_matrix] = parsed_data
+    job_tool_matrix = transpose(job_tool_matrix)
+
+    # Check if the JT matrix matches the sizes claimed by the instance
+    true = (j == length(job_tool_matrix) && (t == length(hd(job_tool_matrix))))
+
+    %{
+      T: t,
+      J: j,
+      C: c,
+      job_tools: job_tool_matrix
+    }
+
+  end
+
   @doc """
   Run the model on a problem instance
   """
-  #def run_model(instance, \\ [])
+  def run_model(instance, opts \\ [])
 
-  def run_model(_instance =
-    %{magazine_size: magazine_size, job_tools: job_tool_matrix}, solver_opts) do
+  def run_model(data_instance, solver_opts) do
     solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
-    number_of_tools = length(hd(job_tool_matrix))
-    number_of_jobs = length(job_tool_matrix)
-    data = %{
-      T: number_of_tools,
-      J: number_of_jobs,
-      C: magazine_size,
-      job_tools: job_tool_matrix
-    }
-    MinizincSolver.solve_sync(get_model(solver_opts), data, solver_opts)
+
+    MinizincSolver.solve_sync(get_model(solver_opts), data_instance, solver_opts)
   end
 
   defp get_model(opts) do
-    Keyword.get(opts, :model)
+    Path.join([:code.priv_dir(:jstsp), "mzn", Keyword.get(opts, :model)])
+  end
+
+  defp transpose(matrix) do
+    matrix
+    |> Enum.zip()
+    |> Enum.map(&Tuple.to_list/1)
   end
 
   def default_solver_opts do
     [
       solver: "gecode",
       solution_handler: JSTSP.MinizincHandler,
-      time_limit: 25_000,
+      time_limit: 30_000,
       model: "jstsp.mzn"
     ]
   end
