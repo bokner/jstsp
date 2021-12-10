@@ -30,7 +30,7 @@ constraint forall(i in JOBS, j in TOOLS)(
 );
 
 constraint forall(i in JOBS)(
-  sum(row(magazine, i)) <= C
+  sum(row(magazine, i)) = C
 );
 
 
