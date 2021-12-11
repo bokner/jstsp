@@ -6,5 +6,5 @@
   "erlexec": {:hex, :erlexec, "1.19.1", "bdd10c4f6c5f3c5c9aa31f5293681b128fab4a25a750119ef07a65f376f3c2ce", [:rebar3], [], "hexpm", "03597ae9140b4e62009e94ba0a0bbf481560146069a90a3eacd32774ea348fd0"},
   "jason": {:hex, :jason, "1.2.2", "ba43e3f2709fd1aa1dce90aaabfd039d000469c05c56f0b8e31978e03fa39052", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "18a228f5f0058ee183f29f9eae0805c6e59d61c3b006760668d8d18ff0d12179"},
   "parallel_stream": {:hex, :parallel_stream, "1.0.6", "b967be2b23f0f6787fab7ed681b4c45a215a81481fb62b01a5b750fa8f30f76c", [:mix], [], "hexpm", "639b2e8749e11b87b9eb42f2ad325d161c170b39b288ac8d04c4f31f8f0823eb"},
-  "solverl": {:git, "https://github.com/bokner/solverl.git", "4cd38c3253aa8d1896d8003d1a395a2f9df5e972", []},
+  "solverl": {:git, "https://github.com/bokner/solverl.git", "3550b386175824cabdbd82ada6984101bd64a0b9", []},
 }

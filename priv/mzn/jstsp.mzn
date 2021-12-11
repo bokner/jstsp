@@ -39,10 +39,10 @@ constraint forall(i in JOBS)(
 
 var int: cost; 
 
-constraint cost = sum(i in 1..J-1)(switches(i));
+constraint cost = sum(i in 1..J-1)(switches(i, i+1));
 
 solve minimize cost;
 
-function var int: switches(var int: job) =
-         sum(t in TOOLS)(magazine[schedule[job + 1], t] > magazine[schedule[job], t]);
+function var int: switches(int: current_job, int: next_job) =
+         sum(t in TOOLS)(magazine[schedule[next_job], t] > magazine[schedule[current_job], t]);
 

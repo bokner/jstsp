@@ -45,7 +45,15 @@ defmodule JSTSP do
   def run_model(data_instance, solver_opts) do
     solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
 
-    MinizincSolver.solve_sync(get_model(solver_opts), data_instance, solver_opts)
+    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts), data_instance, solver_opts)
+    res
+    |> MinizincResults.get_last_solution()
+    |> then(fn solution -> %{
+      solver: res.summary.solver,
+      objective: MinizincResults.get_solution_objective(solution),
+      status: MinizincResults.get_status(res.summary),
+      schedule: MinizincResults.get_solution_value(solution, "schedule")
+    } end)
   end
 
   defp get_model(opts) do
