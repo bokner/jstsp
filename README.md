@@ -1,4 +1,4 @@
-# Jstsp
+# JSTSP
 
 **Framework for solving/benchmarking Job sequencing And Tool Switching Problem**
 
