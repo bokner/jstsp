@@ -1,6 +1,6 @@
 # JSTSP
 
-**Framework for solving/benchmarking Job sequencing And Tool Switching Problem**
+**Framework for solving/benchmarking [Job Sequencing And Tool Switching Problem](https://www.researchgate.net/publication/226547565_Minimizing_the_number_of_tool_switches_on_a_flexible_machine)**
 
 Usage:
 ```elixir
