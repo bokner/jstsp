@@ -5,9 +5,9 @@
 Usage:
 ```elixir
 instance_file_d4_1 = "instances/MTSP/Catanzaro/D4-1.txt"
-JSTSP.Batch.run(instance_file_d4_1, 300000)  
+JSTSP.Batch.run(instance_file_d4_1, 300_000)  
 ## or
-JSTSP.run(instance_file_d4_1, solver: "gecode", time_limit: 300000)  
+JSTSP.run(instance_file_d4_1, solver: "gecode", time_limit: 300_000)  
 ```
 
 
