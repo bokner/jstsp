@@ -1,0 +1,11 @@
+instance,solver,status,objective,schedule
+instances/MTSP/Catanzaro/A3-1.txt,org.minizinc.mip.cplex,optimal,4,[8, 1, 7, 3, 4, 2, 6, 9, 5, 10]
+instances/MTSP/Catanzaro/A3-10.txt,org.minizinc.mip.cplex,optimal,4,[6, 5, 9, 4, 3, 7, 2, 10, 8, 1]
+instances/MTSP/Catanzaro/A3-2.txt,org.minizinc.mip.cplex,optimal,4,[4, 3, 5, 2, 1, 6, 9, 8, 10, 7]
+instances/MTSP/Catanzaro/A3-3.txt,org.minizinc.mip.cplex,optimal,4,[9, 4, 2, 5, 7, 1, 6, 10, 3, 8]
+instances/MTSP/Catanzaro/A3-4.txt,org.minizinc.mip.cplex,optimal,4,[3, 7, 9, 10, 2, 1, 5, 6, 8, 4]
+instances/MTSP/Catanzaro/A3-5.txt,org.minizinc.mip.cplex,optimal,4,[7, 4, 8, 10, 9, 6, 3, 2, 5, 1]
+instances/MTSP/Catanzaro/A3-6.txt,org.minizinc.mip.cplex,optimal,5,[10, 9, 6, 1, 4, 2, 3, 7, 5, 8]
+instances/MTSP/Catanzaro/A3-7.txt,org.minizinc.mip.cplex,optimal,4,[5, 3, 8, 6, 2, 9, 10, 1, 7, 4]
+instances/MTSP/Catanzaro/A3-8.txt,org.minizinc.mip.cplex,optimal,4,[6, 7, 8, 9, 2, 3, 10, 4, 5, 1]
+instances/MTSP/Catanzaro/A3-9.txt,org.minizinc.mip.cplex,optimal,4,[5, 4, 2, 1, 6, 9, 10, 7, 3, 8]
