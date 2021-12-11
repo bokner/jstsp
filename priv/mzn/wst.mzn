@@ -23,16 +23,16 @@ predicate wst(int: N, int: E, array[int] of int: from, array[int] of int: to, ar
                   array[int] of var bool: es, var int: K) =
     let { var 1..N: r; /* root of tree */
           array[1..N] of bool: ns = [true | n in 1..N]; } in
-        tree(N,E,from,to,r,ns,es) /\
+        dtree(N,E,from,to,r,ns,es) /\
         K = sum(e in 1..E)(es[e]*w[e]);
         
 include "all_different.mzn";
 include "fzn_wst.mzn";
         
 int: N = 4;
-int: E = 6;
-array[1..6] of int: from = [1, 1, 1, 2, 2, 3];
-array[1..6] of int: to = [2, 3, 4, 3, 4, 4];
+int: E = 10;
+array[1..10] of int: from = [1, 1, 1, 2, 2, 2, 3, 3, 4, 4];
+array[1..10] of int: to =     [2, 3, 4, 1, 3, 4, 1, 2, 1, 2];
 
 array[1..E] of var 1..E: weight;
 
