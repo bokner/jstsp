@@ -24,3 +24,6 @@ jstsp-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Zip files
+*.zip

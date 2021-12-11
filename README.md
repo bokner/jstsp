@@ -1,6 +1,6 @@
 # Jstsp
 
-**TODO: Add description**
+**Framework for solving/benchmarking Job sequencing And Tool Switching Problem**
 
 Usage:
 ```elixir
