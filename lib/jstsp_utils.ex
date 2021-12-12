@@ -8,7 +8,7 @@ defmodule JSTSP.Utils do
     |> Enum.map(fn line ->
       line
       |> String.trim()
-      |> String.split(" ")
+      |> String.split([" ", "\t"])
       |> Enum.map(fn numstr -> String.to_integer(numstr) end)
     end)
     [[j, t, c] | job_tool_matrix] = parsed_data
