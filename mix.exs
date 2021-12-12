@@ -23,6 +23,6 @@ defmodule Jstsp.MixProject do
     [
       {:solverl, git: "https://github.com/bokner/solverl.git"},
       {:csv, "~> 2.4"}
-      ]
+    ]
   end
 end
