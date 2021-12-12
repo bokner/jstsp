@@ -13,15 +13,7 @@ defmodule JSTP.Utils do
     |> Enum.join("\n")
     |> then(fn content -> File.write(filename, content) end)
   end
-
-  def check_model_results(%{objective: objective, schedule: schedule, jobs: job_tool_matrix}) do
-    case count_switches(schedule, job_tool_matrix) do
-       switches when switches == objective -> :ok
-       switches -> {:error, {:objective_mismatch, %{switches: switches, objective: objective}}}
-    end
-  end
-
-  defp count_switches(schedule, job_tool_matrix) do
+  def count_switches(schedule, job_tool_matrix) do
     Enum.reduce(0..length(schedule) - 1, 0,
     fn idx, acc ->
       job = Enum.at(schedule, idx)
