@@ -55,6 +55,7 @@ defmodule JSTSP do
       status: MinizincResults.get_status(res.summary),
       schedule: MinizincResults.get_solution_value(solution, "schedule")
     } end)
+    |> Map.merge(data_instance)
   end
 
   defp get_model(opts) do
