@@ -14,4 +14,40 @@ defmodule JSTP.Utils do
     |> then(fn content -> File.write(filename, content) end)
   end
 
+  def check_model_results(%{objective: objective, schedule: schedule, jobs: job_tool_matrix}) do
+    case count_switches(schedule, job_tool_matrix) do
+       switches when switches == objective -> :ok
+       switches -> {:error, {:objective_mismatch, %{switches: switches, objective: objective}}}
+    end
+  end
+
+  defp count_switches(schedule, job_tool_matrix) do
+    Enum.reduce(0..length(schedule) - 1, 0,
+    fn idx, acc ->
+      job = Enum.at(schedule, idx)
+      next_job = Enum.at(schedule, idx + 1)
+      acc + switches_next_job(job, next_job, job_tool_matrix)
+    end)
+  end
+
+  defp switches_next_job(job, next_job, job_tool_matrix) do
+    job_tools = job_tools(job, job_tool_matrix)
+    next_job_tools = job_tools(next_job, job_tool_matrix)
+
+    next_job_tools
+    |> MapSet.difference(job_tools)
+    |> MapSet.size()
+  end
+
+  defp job_tools(job, job_tool_matrix) do
+    job_tool_matrix
+    |> Enum.at(job)
+    |> Enum.with_index()
+    |> Enum.flat_map(
+      fn ({0, _idx}) -> []
+          ({1, idx}) -> [idx]
+      end)
+    |> MapSet.new()
+  end
+
 end
