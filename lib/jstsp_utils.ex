@@ -1,4 +1,37 @@
 defmodule JSTSP.Utils do
+
+  def parse_instance(instance_file) do
+    parsed_data =
+    instance_file
+    |> File.read!()
+    |> String.split("\r\n", trim: true)
+    |> Enum.map(fn line ->
+      line
+      |> String.trim()
+      |> String.split(" ")
+      |> Enum.map(fn numstr -> String.to_integer(numstr) end)
+    end)
+    [[j, t, c] | job_tool_matrix] = parsed_data
+    job_tool_matrix = transpose(job_tool_matrix)
+
+    # Check if the JT matrix matches the sizes claimed by the instance
+    true = (j == length(job_tool_matrix) && (t == length(hd(job_tool_matrix))))
+
+    %{
+      T: t,
+      J: j,
+      C: c,
+      job_tools: job_tool_matrix
+    }
+
+  end
+
+  defp transpose(matrix) do
+    matrix
+    |> Enum.zip()
+    |> Enum.map(&Tuple.to_list/1)
+  end
+
   def to_csv(results, filename) do
     header = "instance,J,T,C,solver,status,objective,schedule"
     :ok =

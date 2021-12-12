@@ -2,7 +2,7 @@ defmodule JSTSP do
   @moduledoc """
   Module for solving JSTSP instances.
   """
-
+  import JSTSP.Utils
 
   def run(instance, opts \\ [])
 
@@ -12,31 +12,6 @@ defmodule JSTSP do
     |> run_model(opts)
   end
 
-  def parse_instance(instance_file) do
-    parsed_data =
-    instance_file
-    |> File.read!()
-    |> String.split("\r\n", trim: true)
-    |> Enum.map(fn line ->
-      line
-      |> String.trim()
-      |> String.split(" ")
-      |> Enum.map(fn numstr -> String.to_integer(numstr) end)
-    end)
-    [[j, t, c] | job_tool_matrix] = parsed_data
-    job_tool_matrix = transpose(job_tool_matrix)
-
-    # Check if the JT matrix matches the sizes claimed by the instance
-    true = (j == length(job_tool_matrix) && (t == length(hd(job_tool_matrix))))
-
-    %{
-      T: t,
-      J: j,
-      C: c,
-      job_tools: job_tool_matrix
-    }
-
-  end
 
   @doc """
   Run the model on a problem instance
@@ -60,12 +35,6 @@ defmodule JSTSP do
 
   defp get_model(opts) do
     Path.join([:code.priv_dir(:jstsp), "mzn", Keyword.get(opts, :model)])
-  end
-
-  defp transpose(matrix) do
-    matrix
-    |> Enum.zip()
-    |> Enum.map(&Tuple.to_list/1)
   end
 
   def default_solver_opts do
