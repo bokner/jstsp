@@ -19,6 +19,7 @@ defmodule JSTSP do
     |> String.split("\r\n", trim: true)
     |> Enum.map(fn line ->
       line
+      |> String.trim()
       |> String.split(" ")
       |> Enum.map(fn numstr -> String.to_integer(numstr) end)
     end)
