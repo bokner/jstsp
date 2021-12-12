@@ -1,4 +1,4 @@
-defmodule JSTP.Utils do
+defmodule JSTSP.Utils do
   def to_csv(results, filename) do
     header = "instance,J,T,C,solver,status,objective,schedule"
     :ok =
