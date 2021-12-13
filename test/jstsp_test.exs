@@ -17,15 +17,12 @@ defmodule JstspTest do
       |> then(fn solution ->
         %{
           schedule: MinizincResults.get_solution_value(solution, "schedule"),
+          magazine: MinizincResults.get_solution_value(solution, "magazine"),
           objective: MinizincResults.get_solution_objective(solution)
         }
       end)
 
-    Logger.debug("Schedule: #{inspect(model_results.schedule)}")
-    Logger.debug("Objective: #{inspect(model_results.objective)}")
-
-    switches = count_switches(model_results.schedule, jstsp_sample().job_tools)
-    Logger.debug("Count switches from schedule and job-tool matrix: #{switches}")
+    switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective
   end
 

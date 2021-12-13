@@ -1,4 +1,6 @@
 defmodule JSTSP.Utils do
+  require Logger
+
   def default_solver_opts do
     [
       solver: "gecode",
@@ -69,30 +71,34 @@ defmodule JSTSP.Utils do
       |> then(fn content -> File.write(filename, content) end)
   end
 
-  def count_switches(schedule, job_tool_matrix) do
-    Enum.reduce(0..(length(schedule) - 2), 0, fn idx, acc ->
-      job = Enum.at(schedule, idx) - 1
-      next_job = Enum.at(schedule, idx + 1) - 1
-      acc + switches_next_job(job, next_job, job_tool_matrix)
+  def count_switches(schedule, magazine) do
+    magazine_sequence =
+      Enum.map(
+        0..(length(schedule) - 1),
+        fn i ->
+          magazine
+          |> Enum.at(Enum.at(schedule, i) - 1)
+          |> to_toolset()
+        end
+      )
+
+    ## At this point, we have a sequence of sets of tools
+    ## that corresponds to the sequence of jobs.
+    ## The number of switches when moving to next job
+    ## is a difference between the next and current tool sets.
+    Enum.reduce(0..(length(magazine_sequence) - 2), 0, fn j, acc ->
+      magazine_state = Enum.at(magazine_sequence, j)
+      next_magazine_state = Enum.at(magazine_sequence, j + 1)
+      acc + MapSet.size(MapSet.difference(next_magazine_state, magazine_state))
     end)
   end
 
-  defp switches_next_job(job, next_job, job_tool_matrix) do
-    job_tools = job_tools(job, job_tool_matrix)
-    next_job_tools = job_tools(next_job, job_tool_matrix)
-
-    next_job_tools
-    |> MapSet.difference(job_tools)
-    |> MapSet.size()
-  end
-
-  defp job_tools(job, job_tool_matrix) do
-    job_tool_matrix
-    |> Enum.at(job)
-    |> Enum.with_index()
+  defp to_toolset(tools) do
+    tools
+    |> Enum.with_index(1)
     |> Enum.flat_map(fn
-      {0, _idx} -> []
       {1, idx} -> [idx]
+      {0, _idx} -> []
     end)
     |> MapSet.new()
   end
