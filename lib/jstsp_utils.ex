@@ -62,7 +62,7 @@ defmodule JSTSP.Utils do
                    objective: objective,
                    schedule: schedule
                  } ->
-                "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{status},#{objective},#{inspect(schedule)}"
+                "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{status},#{objective},\"#{inspect(schedule)}\""
               end
             )
         end
