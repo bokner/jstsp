@@ -29,7 +29,8 @@ defmodule JSTSP do
         solver: res.summary.solver,
         objective: MinizincResults.get_solution_objective(solution),
         status: MinizincResults.get_status(res.summary),
-        schedule: MinizincResults.get_solution_value(solution, "schedule")
+        schedule: MinizincResults.get_solution_value(solution, "schedule"),
+        magazine: MinizincResults.get_solution_value(solution, "magazine")
       }
     end)
     |> Map.merge(data_instance)
