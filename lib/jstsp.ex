@@ -27,6 +27,7 @@ defmodule JSTSP do
     |> then(fn solution ->
       %{
         solver: res.summary.solver,
+        time_limit: solver_opts[:time_limit],
         objective: MinizincResults.get_solution_objective(solution),
         status: MinizincResults.get_status(res.summary),
         schedule: MinizincResults.get_solution_value(solution, "schedule"),

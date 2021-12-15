@@ -18,11 +18,12 @@ defmodule JSTSP.Utils do
       |> Enum.map(fn line ->
         line
         |> String.trim()
-        |> String.split([" ", "\t"])
+        |> String.split([" ", "\t"], trim: true)
         |> Enum.map(fn numstr -> String.to_integer(numstr) end)
       end)
 
-    [[j, t, c] | job_tool_matrix] = parsed_data
+    # [[j, t, c] | job_tool_matrix] = parsed_data
+    {j, t, c, job_tool_matrix} = to_instance_data(parsed_data)
     job_tool_matrix = transpose(job_tool_matrix)
 
     # Check if the JT matrix matches the sizes claimed by the instance
@@ -36,6 +37,16 @@ defmodule JSTSP.Utils do
     }
   end
 
+  defp to_instance_data(parsed_data) do
+    ## known formats:
+    ## 1) 3 numbers J, T, C in the first row
+    ## 2) J, T, C in the first 3 rows
+    case parsed_data do
+      [[j, t, c] | job_tool_matrix] -> {j, t, c, job_tool_matrix}
+      [[j], [t], [c] | job_tool_matrix] -> {j, t, c, job_tool_matrix}
+    end
+  end
+
   defp transpose(matrix) do
     matrix
     |> Enum.zip()
@@ -43,7 +54,7 @@ defmodule JSTSP.Utils do
   end
 
   def to_csv(results, filename) do
-    header = "instance,J,T,C,solver,status,objective,schedule"
+    header = "instance,J,T,C,solver,time_limit(msec),status,objective,schedule"
 
     :ok =
       results
@@ -58,11 +69,12 @@ defmodule JSTSP.Utils do
                    J: jobs,
                    C: capacity,
                    solver: solver,
+                   time_limit: time_limit,
                    status: status,
                    objective: objective,
                    schedule: schedule
                  } ->
-                "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{status},#{objective},\"#{inspect(schedule)}\""
+                "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
               end
             )
         end
