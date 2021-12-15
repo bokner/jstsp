@@ -15,16 +15,21 @@ defmodule JSTSP.Utils do
       instance_file
       |> File.read!()
       |> String.split("\r\n", trim: true)
-      |> Enum.map(fn line ->
+      |> Enum.flat_map(fn line ->
         line
-        |> String.trim()
         |> String.split([" ", "\t"], trim: true)
-        |> Enum.map(fn numstr -> String.to_integer(numstr) end)
+        |> Enum.map(fn numstr ->
+          numstr
+          |> String.trim()
+          |> String.to_integer()
+        end)
       end)
+    [j, t, c | job_tools] = parsed_data
 
-    # [[j, t, c] | job_tool_matrix] = parsed_data
-    {j, t, c, job_tool_matrix} = to_instance_data(parsed_data)
-    job_tool_matrix = transpose(job_tool_matrix)
+    job_tool_matrix = 
+    job_tools
+    |> Enum.chunk_every(j)
+    |> transpose()
 
     # Check if the JT matrix matches the sizes claimed by the instance
     true = j == length(job_tool_matrix) && t == length(hd(job_tool_matrix))
@@ -37,15 +42,6 @@ defmodule JSTSP.Utils do
     }
   end
 
-  defp to_instance_data(parsed_data) do
-    ## known formats:
-    ## 1) 3 numbers J, T, C in the first row
-    ## 2) J, T, C in the first 3 rows
-    case parsed_data do
-      [[j, t, c] | job_tool_matrix] -> {j, t, c, job_tool_matrix}
-      [[j], [t], [c] | job_tool_matrix] -> {j, t, c, job_tool_matrix}
-    end
-  end
 
   defp transpose(matrix) do
     matrix
