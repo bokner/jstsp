@@ -1,0 +1,2 @@
+1. Test for reversing job list (model -> results -> feed schedule -> model)
+2. Statement (Senne, Yanasse): given the job sequence, the lower bound for swtiches can be found with KTNS (Keep Tool Needed Soonest) algorithm (Tang, Denardo)
