@@ -34,7 +34,9 @@ constraint forall(i in JOBS)(
 );
 
 %% Symmetry breaks
-constraint lex_lesseq(schedule, reverse(schedule));
+%constraint lex_lesseq(schedule, reverse(schedule));
+
+constraint schedule[1] < schedule[J];
 
 
 
