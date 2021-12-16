@@ -33,6 +33,10 @@ constraint forall(i in JOBS)(
   sum(row(magazine, i)) = C
 );
 
+%% Symmetry breaks
+constraint lex_lesseq(schedule, reverse(schedule));
+
+
 
 var int: cost; 
 
