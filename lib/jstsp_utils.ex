@@ -24,12 +24,13 @@ defmodule JSTSP.Utils do
           |> String.to_integer()
         end)
       end)
+
     [j, t, c | job_tools] = parsed_data
 
-    job_tool_matrix = 
-    job_tools
-    |> Enum.chunk_every(j)
-    |> transpose()
+    job_tool_matrix =
+      job_tools
+      |> Enum.chunk_every(j)
+      |> transpose()
 
     # Check if the JT matrix matches the sizes claimed by the instance
     true = j == length(job_tool_matrix) && t == length(hd(job_tool_matrix))
@@ -41,7 +42,6 @@ defmodule JSTSP.Utils do
       job_tools: job_tool_matrix
     }
   end
-
 
   defp transpose(matrix) do
     matrix

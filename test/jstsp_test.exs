@@ -9,7 +9,12 @@ defmodule JstspTest do
   test "check the model output" do
     model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
     data_instance = Path.join([:code.priv_dir(:jstsp), "mzn", "da_silva1.dzn"])
-    {:ok, res} = MinizincSolver.solve_sync(model, data_instance, solver: "gecode")
+
+    {:ok, res} =
+      MinizincSolver.solve_sync(model, data_instance,
+        solver: "gecode",
+        solution_handler: JSTSP.MinizincHandler
+      )
 
     model_results =
       res

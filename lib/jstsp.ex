@@ -58,13 +58,18 @@ defmodule JSTSP.MinizincHandler do
 
   @doc false
   def handle_summary(summary) do
-    Logger.info("MZN final status: #{summary[:status]}")
+    last_solution = MinizincResults.get_last_solution(summary)
+
+    Logger.debug(
+      "MZN final status (#{summary.solver}): #{summary.status}, objective: #{MinizincResults.get_solution_objective(last_solution)}"
+    )
+
     DefaultHandler.handle_summary(summary)
   end
 
   @doc false
   def handle_minizinc_error(error) do
-    Logger.info("Minizinc error: #{inspect(error)}")
+    Logger.debug("Minizinc error: #{inspect(error)}")
     DefaultHandler.handle_minizinc_error(error)
   end
 end
