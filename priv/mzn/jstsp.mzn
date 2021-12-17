@@ -44,6 +44,8 @@ var int: cost;
 
 constraint cost = sum(i in 1..J-1)(switches(i, i+1));
 
+constraint cost >= T - C;
+
 solve minimize cost;
 
 function var int: switches(int: current_job, int: next_job) =
