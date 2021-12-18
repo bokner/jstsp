@@ -79,6 +79,13 @@ defmodule JSTSP.Utils do
       |> then(fn content -> File.write(filename, content) end)
   end
 
+  def non_optimal_results(csv_file) do
+    csv_file
+    |> File.stream!
+    |> CSV.decode(headers: true)
+    |> Enum.map(fn {:ok, rec} -> rec end)
+    |> Enum.reject(fn rec -> rec["status"] == "optimal" end)
+  end
   def count_switches(schedule, magazine) do
     magazine_sequence =
       Enum.map(

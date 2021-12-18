@@ -38,7 +38,17 @@ defmodule JSTSP do
   end
 
   defp get_model(opts) do
-    Path.join([:code.priv_dir(:jstsp), "mzn", Keyword.get(opts, :model)])
+    case Keyword.get(opts, :model) do
+      model when is_list(model) -> build_model(model)
+      model -> build_model([model])
+    end
+  end
+
+  defp build_model(model_list) do
+    Enum.map(model_list, fn
+      {:model_text, model} -> {:model_text, model}
+      model_file -> Path.join([:code.priv_dir(:jstsp), "mzn", model_file])
+    end)
   end
 end
 
