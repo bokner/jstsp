@@ -3,9 +3,9 @@ defmodule JSTSP.Utils do
 
   def default_solver_opts do
     [
-      solver: "gecode",
+      solver: "cplex",
       solution_handler: JSTSP.MinizincHandler,
-      time_limit: 30_000,
+      time_limit: 300_000,
       model: "jstsp.mzn"
     ]
   end
