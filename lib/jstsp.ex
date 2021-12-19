@@ -37,10 +37,17 @@ defmodule JSTSP do
     |> Map.merge(data_instance)
   end
 
+
   defp get_model(opts) do
+    instance_model =
     case Keyword.get(opts, :model) do
       model when is_list(model) -> build_model(model)
       model -> build_model([model])
+    end
+    case Keyword.get(opts, :upper_bound) do
+      nil -> instance_model
+      upper_bound ->
+        [{:model_text, upper_bound_constraint(upper_bound)} | instance_model]
     end
   end
 

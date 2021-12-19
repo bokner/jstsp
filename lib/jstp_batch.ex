@@ -19,6 +19,17 @@ defmodule JSTSP.Batch do
   def run(instance_file, solvers \\ solvers(), opts)
 
   def run(instance_file, solvers, opts) do
+    (Keyword.get(opts, :sync) && run_sync(instance_file, solvers, opts)) ||
+      run_async(instance_file, solvers, opts)
+  end
+
+  def run_sync(instance_file, solvers, opts) do
+        Enum.map(solvers, fn solver ->
+          JSTSP.run(instance_file, Keyword.merge([solver: solver], opts))
+        end)
+  end
+
+  def run_async(instance_file, solvers, opts) do
     Task.async_stream(
       solvers,
       fn solver ->
@@ -32,4 +43,6 @@ defmodule JSTSP.Batch do
       res
     end)
   end
+
+
 end

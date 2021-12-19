@@ -81,10 +81,18 @@ defmodule JSTSP.Utils do
 
   def non_optimal_results(csv_file) do
     csv_file
-    |> File.stream!
+    |> File.stream!()
     |> CSV.decode(headers: true)
     |> Enum.map(fn {:ok, rec} -> rec end)
     |> Enum.reject(fn rec -> rec["status"] == "optimal" end)
+  end
+
+  def upper_bound_constraint(upper_bound) when is_integer(upper_bound) do
+    "constraint cost <= #{upper_bound};"
+  end
+
+  def schedule_constraint(schedule) do
+    "constraint schedule = #{inspect schedule};"
   end
   def count_switches(schedule, magazine) do
     magazine_sequence =

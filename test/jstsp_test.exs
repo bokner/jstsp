@@ -25,7 +25,7 @@ defmodule JstspTest do
   test "Yanasse, Senne" do
     sample = jstsp_set_sample()
     our_schedule = [2, 9, 10, 1, 11, 14, 8, 4, 6, 12, 15, 13, 7, 3, 5]
-    solution_constraint = {:model_text, "constraint schedule = #{inspect(our_schedule)};"}
+    solution_constraint = {:model_text, schedule_constraint(our_schedule)}
     m = Enum.max(List.flatten(sample.jobs))
 
     job_tools =
