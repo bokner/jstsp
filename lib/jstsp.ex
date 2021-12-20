@@ -8,8 +8,9 @@ defmodule JSTSP do
 
   def run(instance_file, opts) when is_binary(instance_file) do
     instance_file
-    |> parse_instance()
+    |> instance_data()
     |> run_model(opts)
+    |> Map.put(:instance, instance_file)
   end
 
   @doc """

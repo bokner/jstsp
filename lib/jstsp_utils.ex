@@ -10,7 +10,7 @@ defmodule JSTSP.Utils do
     ]
   end
 
-  def parse_instance(instance_file) do
+  def instance_data(instance_file) do
     parsed_data =
       instance_file
       |> File.read!()
@@ -59,26 +59,29 @@ defmodule JSTSP.Utils do
         fn %{instance: instance, results: solver_results}, acc ->
           acc ++
             Enum.map(
-              solver_results,
-              fn %{
-                   T: tools,
-                   J: jobs,
-                   C: capacity,
-                   solver: solver,
-                   time_limit: time_limit,
-                   status: status,
-                   objective: objective,
-                   schedule: schedule
-                 } ->
-                "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
-              end
+              solver_results, fn res -> result_to_csv(instance, res) end
             )
+          %{instance: instance} = res, acc ->
+            acc ++ [result_to_csv(instance, res)]
         end
       )
       |> Enum.join("\n")
       |> then(fn content -> File.write(filename, content) end)
   end
 
+  def result_to_csv(instance, _result =
+    %{
+      T: tools,
+      J: jobs,
+      C: capacity,
+      solver: solver,
+      time_limit: time_limit,
+      status: status,
+      objective: objective,
+      schedule: schedule
+    }) do
+   "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
+ end
   def non_optimal_results(csv_file) do
     csv_file
     |> File.stream!()
