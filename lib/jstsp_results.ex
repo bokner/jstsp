@@ -31,4 +31,23 @@ defmodule JSTSP.Results do
       }
       end)
   end
+
+  def yanasse_beam_search_results() do
+    obks = [
+      {"L22-3", 18},
+      {"L22-4", 15},
+      {"L22-5", 17},
+      {"L22-6", 15},
+      {"L22-8", 19},
+      {"L22-9", 18},
+      {"L22-10", 16},
+      {"L23-2", 10},
+      {"L23-3", 10},
+      {"L25-6", 5}
+    ]
+    Enum.map(obks, fn {name, _value} ->
+      "instances/MTSP/Laporte/Tabela6/#{name}.txt"
+    end)
+
+  end
 end
