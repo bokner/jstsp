@@ -1,5 +1,6 @@
 defmodule JSTSP.Results do
   require Logger
+
   def update_results(results_csv, opts) do
     results_csv
     |> parse_results()
@@ -16,7 +17,7 @@ defmodule JSTSP.Results do
 
   def parse_results(csv_results) do
     csv_results
-    |> File.stream!
+    |> File.stream!()
     |> CSV.decode(headers: true)
     |> Enum.map(fn {:ok, rec} ->
       %{
@@ -29,7 +30,7 @@ defmodule JSTSP.Results do
         C: String.to_integer(rec["C"]),
         solver: rec["solver"]
       }
-      end)
+    end)
   end
 
   def yanasse_beam_search_results() do
@@ -45,9 +46,9 @@ defmodule JSTSP.Results do
       {"L23-3", 10},
       {"L25-6", 5}
     ]
+
     Enum.map(obks, fn {name, _value} ->
       "instances/MTSP/Laporte/Tabela6/#{name}.txt"
     end)
-
   end
 end

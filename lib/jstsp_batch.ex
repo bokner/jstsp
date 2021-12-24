@@ -24,9 +24,9 @@ defmodule JSTSP.Batch do
   end
 
   def run_sync(instance_file, solvers, opts) do
-        Enum.map(solvers, fn solver ->
-          JSTSP.run(instance_file, Keyword.merge([solver: solver], opts))
-        end)
+    Enum.map(solvers, fn solver ->
+      JSTSP.run(instance_file, Keyword.merge([solver: solver], opts))
+    end)
   end
 
   def run_async(instance_file, solvers, opts) do
@@ -43,6 +43,4 @@ defmodule JSTSP.Batch do
       res
     end)
   end
-
-
 end

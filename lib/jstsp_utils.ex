@@ -56,11 +56,14 @@ defmodule JSTSP.Utils do
       results
       |> Enum.reduce(
         [header],
-        fn %{instance: instance, results: solver_results}, acc ->
-          acc ++
-            Enum.map(
-              solver_results, fn res -> result_to_csv(instance, res) end
-            )
+        fn
+          %{instance: instance, results: solver_results}, acc ->
+            acc ++
+              Enum.map(
+                solver_results,
+                fn res -> result_to_csv(instance, res) end
+              )
+
           %{instance: instance} = res, acc ->
             acc ++ [result_to_csv(instance, res)]
         end
@@ -69,19 +72,22 @@ defmodule JSTSP.Utils do
       |> then(fn content -> File.write(filename, content) end)
   end
 
-  def result_to_csv(instance, _result =
-    %{
-      T: tools,
-      J: jobs,
-      C: capacity,
-      solver: solver,
-      time_limit: time_limit,
-      status: status,
-      objective: objective,
-      schedule: schedule
-    }) do
-   "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
- end
+  def result_to_csv(
+        instance,
+        _result = %{
+          T: tools,
+          J: jobs,
+          C: capacity,
+          solver: solver,
+          time_limit: time_limit,
+          status: status,
+          objective: objective,
+          schedule: schedule
+        }
+      ) do
+    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
+  end
+
   def non_optimal_results(csv_file) do
     csv_file
     |> File.stream!()
@@ -95,8 +101,9 @@ defmodule JSTSP.Utils do
   end
 
   def schedule_constraint(schedule) do
-    "constraint schedule = #{inspect schedule};"
+    "constraint schedule = #{inspect(schedule)};"
   end
+
   def count_switches(schedule, magazine) do
     magazine_sequence =
       Enum.map(
@@ -127,5 +134,30 @@ defmodule JSTSP.Utils do
       {0, _idx} -> []
     end)
     |> MapSet.new()
+  end
+
+  def to_matrix(jobs) do
+    m = Enum.max(List.flatten(jobs))
+
+    Enum.map(
+      jobs,
+      fn job -> Enum.map(1..m, fn i -> (i in job && 1) || 0 end) end
+    )
+  end
+
+  @spec dominant_jobs([[0 | 1]]) :: [any()]
+  def dominant_jobs(jobs) do
+    sorted_jobs = Enum.sort(Enum.with_index(jobs, 1))
+
+    Enum.reduce(0..(length(sorted_jobs) - 2), [], fn pos, acc ->
+      {current_job, current_idx} = Enum.at(sorted_jobs, pos)
+
+      Enum.reduce((pos + 1)..(length(sorted_jobs) - 2), acc, fn next, acc2 ->
+        {next_job, next_idx} = Enum.at(sorted_jobs, next)
+
+        (Enum.all?(Enum.zip(current_job, next_job), fn {c, n} -> n >= c end) &&
+           [{current_idx, next_idx} | acc2]) || acc2
+      end)
+    end)
   end
 end
