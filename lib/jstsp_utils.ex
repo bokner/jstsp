@@ -146,17 +146,18 @@ defmodule JSTSP.Utils do
   end
 
   @spec dominant_jobs([[0 | 1]]) :: [any()]
-  def dominant_jobs(jobs) do
-    sorted_jobs = Enum.sort(Enum.with_index(jobs, 1))
+  def dominant_jobs(job_matrix) do
+    sorted_job_matrix =
+      Enum.sort_by(Enum.with_index(job_matrix, 1), fn {job, _idx} -> {Enum.sum(job), job} end)
 
-    Enum.reduce(0..(length(sorted_jobs) - 2), [], fn pos, acc ->
-      {current_job, current_idx} = Enum.at(sorted_jobs, pos)
+    Enum.reduce(0..(length(sorted_job_matrix) - 2), [], fn pos, acc ->
+      {current_job, current_idx} = Enum.at(sorted_job_matrix, pos)
 
-      Enum.reduce((pos + 1)..(length(sorted_jobs) - 2), acc, fn next, acc2 ->
-        {next_job, next_idx} = Enum.at(sorted_jobs, next)
+      Enum.reduce_while((pos + 1)..(length(sorted_job_matrix) - 1), acc, fn next_pos, acc2 ->
+        {next_job, next_idx} = Enum.at(sorted_job_matrix, next_pos)
 
-        (Enum.all?(Enum.zip(current_job, next_job), fn {c, n} -> n >= c end) &&
-           [{current_idx, next_idx} | acc2]) || acc2
+        (Enum.all?(Enum.zip(next_job, current_job), fn {n, c} -> n >= c end) &&
+           {:halt, [{current_idx, next_idx} | acc2]}) || {:cont, acc2}
       end)
     end)
   end
