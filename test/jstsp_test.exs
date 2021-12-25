@@ -62,21 +62,29 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, job_tools)
 
-    solution_constraint = {:model_text, schedule_constraint(sample.schedule)}
-    model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
-    {:ok, mzn_results} =
-      MinizincSolver.solve_sync([model, solution_constraint], data,
-        solver: "cplex",
-        solution_handler: JSTSP.MinizincHandler,
-        time_limit: 1200_000
-      )
-
-    model_results = model_results(mzn_results)
-
-    switches = count_switches(model_results.schedule, model_results.magazine)
-    assert switches == model_results.objective
     ## The optimal value claimed by Yanasse, Senne
-    assert model_results.objective == 13
+    assert_schedule(sample.schedule, data, 13)
+  end
+
+  test "dominant/dominated jobs" do
+    ## Following Y/S example ('An enumeration algorithm....')
+    sample = jstsp_set_sample2()
+    full_job_list = sample.jobs
+    dominant_jobs = dominant_jobs(full_job_list)
+    dominated = Enum.uniq(Enum.map(dominant_jobs, fn {d, _by} -> d end))
+    reduced_list = Enum.reject(sample.schedule, fn f -> f in dominated end)
+    assert length(dominated) == 10
+    assert length(reduced_list) == 15
+    ## Merge dominated jobs into the reduced schedule
+    full_schedule = merge_dominated(reduced_list, dominant_jobs)
+    assert length(full_schedule) == 25
+    ## Validate the full schedule
+    data =
+      sample
+      |> Map.take([:C, :T, :J])
+      |> Map.put(:job_tools, to_matrix(full_job_list))
+
+    assert_schedule(full_schedule, data, 13)
   end
 
   defp jstsp_sample() do
@@ -210,5 +218,23 @@ defmodule JstspTest do
         objective: MinizincResults.get_solution_objective(solution)
       }
     end)
+  end
+
+  defp assert_schedule(schedule, data, objective) do
+    solution_constraint = {:model_text, schedule_constraint(schedule)}
+    model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
+    {:ok, mzn_results} =
+      MinizincSolver.solve_sync([model, solution_constraint], data,
+        solver: "cplex",
+        solution_handler: JSTSP.MinizincHandler,
+        time_limit: 1200_000
+      )
+
+    model_results = model_results(mzn_results)
+
+    switches = count_switches(model_results.schedule, model_results.magazine)
+    assert switches == model_results.objective
+    assert model_results.objective == objective
+
   end
 end

@@ -145,10 +145,21 @@ defmodule JSTSP.Utils do
     )
   end
 
-  @spec dominant_jobs([[0 | 1]]) :: [any()]
-  def dominant_jobs(job_matrix) do
+  @doc """
+    Definition: the job A is dominated by job B <=> A is a subset of B.
+    Computes the list of {dominated, by} tuples.
+  """
+  @spec dominant_jobs([[non_neg_integer()]]) :: [{dominated :: non_neg_integer(), by :: non_neg_integer()}]
+  def dominant_jobs(jobs) do
+    Enum.max(List.flatten(jobs)) <= 1 && dominant_jobs_impl(jobs)
+    || dominant_jobs_impl(to_matrix(jobs))
+  end
+
+  defp dominant_jobs_impl(job_matrix) do
     sorted_job_matrix =
-      Enum.sort_by(Enum.with_index(job_matrix, 1), fn {job, _idx} -> {Enum.sum(job), job} end)
+      job_matrix
+      |> Enum.with_index(1)
+      |> Enum.sort_by(fn {job, _idx} -> {Enum.sum(job), job} end)
 
     Enum.reduce(0..(length(sorted_job_matrix) - 2), [], fn pos, acc ->
       {current_job, current_idx} = Enum.at(sorted_job_matrix, pos)
@@ -160,5 +171,41 @@ defmodule JSTSP.Utils do
            {:halt, [{current_idx, next_idx} | acc2]}) || {:cont, acc2}
       end)
     end)
+
+  end
+  @doc """
+    Purpose:
+    The schedule is a solution of the problem, reduced by removing
+    dominated jobs (Yanasse, Senne, 2009).
+    We want to merge dominated jobs back in by putting each of them
+    after their dominant jobs (as obviously this won't change the switch count).
+  """
+  def merge_dominated(schedule, dominant_jobs) do
+    dominance_map = Enum.group_by(dominant_jobs,
+      fn {_d, by} -> by end, fn {d, _by} -> d end)
+      schedule
+      |> merge_dominated_impl(dominance_map)
+      |> valid_schedule_order()
+  end
+
+  defp merge_dominated_impl(schedule, dominance_map) when map_size(dominance_map) == 0 do
+    schedule
+  end
+
+  defp merge_dominated_impl(schedule, dominance_map) do
+    {dominance_map, schedule} = Enum.reduce(schedule, {dominance_map, []},
+    fn job_idx, {reduced_map, merged_schedule} = _acc ->
+      merged = merged_schedule ++ [job_idx | Map.get(reduced_map, job_idx, [])]
+      {Map.delete(reduced_map, job_idx), merged}
+    end)
+    merge_dominated_impl(schedule, dominance_map)
+
+  end
+
+  ## To be compatible with the model constraints,
+  ## we flip the schedule so the head is less than tail
+  def valid_schedule_order(schedule) do
+    hd(schedule) > List.last(schedule) && Enum.reverse(schedule)
+    || schedule
   end
 end
