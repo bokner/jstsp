@@ -1,7 +1,7 @@
 %% Job sequencing with tool switching.
 %% Given the set T of tools,
 %% the set J of jobs, 
-%% the requried set of tools for each of the jobs,
+%% the required set of tools for each of the jobs,
 %% and a capacity of magazine C -
 %% find the schedule of jobs that minimizes the tool switches.
 
@@ -34,8 +34,6 @@ constraint forall(i in JOBS)(
 );
 
 %% Symmetry breaks
-%constraint lex_lesseq(schedule, reverse(schedule));
-
 constraint schedule[1] < schedule[J];
 
 
