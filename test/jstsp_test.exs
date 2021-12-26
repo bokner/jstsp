@@ -66,6 +66,7 @@ defmodule JstspTest do
     assert_schedule(sample.schedule, data, 13)
   end
 
+  @tag timeout: 150_000
   test "dominant/dominated jobs" do
     ## Following Y/S example ('An enumeration algorithm....')
     sample = jstsp_set_sample2()
@@ -85,6 +86,26 @@ defmodule JstspTest do
       |> Map.put(:job_tools, to_matrix(full_job_list))
 
     assert_schedule(full_schedule, data, 13)
+    ## Run model with reduced job list
+    reduced_job_list =
+    full_job_list
+    |> Enum.with_index(1)
+    |> Enum.flat_map(fn {job, idx} -> idx in reduced_list && [job] || [] end)
+    |> to_matrix()
+
+    data =
+      sample
+      |> Map.take([:C, :T])
+      |> Map.put(:J, length(reduced_job_list))
+      |> Map.put(:job_tools, reduced_job_list)
+    model_results = JSTSP.run_model(data,
+        solver: "yuck",
+        solution_handler: JSTSP.MinizincHandler,
+        time_limit: 120_000,
+        upper_bound: 13
+      )
+
+    assert model_results.objective == 13
   end
 
   defp jstsp_sample() do
