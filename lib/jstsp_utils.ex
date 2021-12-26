@@ -49,7 +49,7 @@ defmodule JSTSP.Utils do
     }
   end
 
-  defp transpose(matrix) do
+  def transpose(matrix) do
     matrix
     |> Enum.zip()
     |> Enum.map(&Tuple.to_list/1)

@@ -114,6 +114,26 @@ defmodule JstspTest do
     assert model_results.objective == 13
   end
 
+  test "set cover" do
+    instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
+    cover_results = JSTSP.job_cover(instance, solver: "cplex")
+    cover = cover_results.cover
+    jobs = cover_results.job_tools
+    cover_jobs = Enum.flat_map(0..length(cover) - 1,
+      fn pos -> Enum.at(cover, pos) == 1 && [Enum.at(jobs, pos)]
+        || []
+    end)
+    tool_matrix = JSTSP.Utils.transpose(cover_jobs)
+    ## All tools are covered by job set cover...
+    assert Enum.all?(tool_matrix, fn tool -> Enum.sum(tool) > 0 end)
+    ## ... and any reduction of job set cover does not cover it
+    ## (that is, the cover cannot be reduced to its subset)
+    Enum.each(0..length(cover_jobs) - 1, fn pos ->
+    refute Enum.all?(tool_matrix, fn tool -> Enum.sum(List.delete_at(tool, pos)) > 0 end)
+    end)
+
+  end
+
   defp jstsp_sample() do
     %{
       job_tools: [
