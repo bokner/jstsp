@@ -10,13 +10,14 @@ defmodule JstspTest do
     model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
     data_instance = Path.join([:code.priv_dir(:jstsp), "mzn", "da_silva1.dzn"])
 
-    {:ok, res} =
+    {:ok, mzn_results} =
       MinizincSolver.solve_sync(model, data_instance,
+        Keyword.merge(default_solver_opts(),
         solver: "gecode",
-        solution_handler: JSTSP.MinizincHandler
+        solution_handler: JSTSP.MinizincHandler)
       )
 
-    model_results = model_results(res)
+    model_results = model_results(mzn_results)
 
     switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective
@@ -37,9 +38,10 @@ defmodule JstspTest do
 
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
+      Keyword.merge(default_solver_opts(),
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 150_000
+        time_limit: 150_000)
       )
 
     model_results = model_results(mzn_results)
@@ -54,7 +56,6 @@ defmodule JstspTest do
 
    test "Yanasse, Senne (2)" do
     sample = jstsp_set_sample2()
-    our_schedule = [11, 15, 6, 14, 18, 1, 12, 9, 3, 20, 5, 17, 2, 10, 4, 7, 8, 16, 13, 19]
     job_tools = to_matrix(sample.jobs)
 
     data =
@@ -77,7 +78,7 @@ defmodule JstspTest do
       dominant_jobs
       |> Enum.map(fn {d, _by} -> d end)
       |> Enum.uniq()
-      
+
     reduced_list = Enum.reject(sample.schedule, fn f -> f in dominated end)
     assert length(dominated) == 10
     assert length(reduced_list) == 15
@@ -251,9 +252,10 @@ defmodule JstspTest do
     model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
+      Keyword.merge(default_solver_opts(),
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 1200_000
+        time_limit: 1200_000)
       )
 
     model_results = model_results(mzn_results)
