@@ -22,6 +22,7 @@ defmodule Jstsp.MixProject do
   defp deps do
     [
       {:solverl, git: "https://github.com/bokner/solverl.git"},
+      #{:solverl, path: "/Users/bokner/projects/solverl"},
       {:csv, "~> 2.4"}
     ]
   end
