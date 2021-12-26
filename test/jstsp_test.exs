@@ -69,10 +69,15 @@ defmodule JstspTest do
   @tag timeout: 150_000
   test "dominant/dominated jobs" do
     ## Following Y/S example ('An enumeration algorithm....')
+    ys_optimal = 13 ## The optimal value claimed by Y/S
     sample = jstsp_set_sample2()
     full_job_list = sample.jobs
     dominant_jobs = dominant_jobs(full_job_list)
-    dominated = Enum.uniq(Enum.map(dominant_jobs, fn {d, _by} -> d end))
+    dominated =
+      dominant_jobs
+      |> Enum.map(fn {d, _by} -> d end)
+      |> Enum.uniq()
+      
     reduced_list = Enum.reject(sample.schedule, fn f -> f in dominated end)
     assert length(dominated) == 10
     assert length(reduced_list) == 15
@@ -85,7 +90,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, to_matrix(full_job_list))
 
-    assert_schedule(full_schedule, data, 13)
+    assert_schedule(full_schedule, data, ys_optimal)
     ## Run model with reduced job list
     reduced_job_list =
     full_job_list
@@ -102,7 +107,7 @@ defmodule JstspTest do
         solver: "yuck",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 120_000,
-        upper_bound: 13
+        upper_bound: ys_optimal
       )
 
     assert model_results.objective == 13
