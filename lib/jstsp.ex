@@ -3,6 +3,7 @@ defmodule JSTSP do
   Module for solving JSTSP instances.
   """
   import JSTSP.Utils
+  require Logger
 
   def run(instance, opts \\ [])
 
@@ -18,10 +19,10 @@ defmodule JSTSP do
   """
   def run_model(instance, opts \\ [])
 
-  def run_model(data_instance, solver_opts) do
+  def run_model(instance_data, solver_opts) do
     solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
 
-    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts), data_instance, solver_opts)
+    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts), instance_data, solver_opts)
 
     res
     |> MinizincResults.get_last_solution()
@@ -35,12 +36,14 @@ defmodule JSTSP do
         magazine: MinizincResults.get_solution_value(solution, "magazine")
       }
     end)
-    |> Map.merge(data_instance)
+    |> Map.merge(instance_data)
   end
 
-  defp get_model(opts) do
+  defp get_model(opts, model_type \\ :model)
+
+  defp get_model(opts, model_type) do
     instance_model =
-      case Keyword.get(opts, :model) do
+      case Keyword.get(opts, model_type) do
         model when is_list(model) -> build_model(model)
         model -> build_model([model])
       end
@@ -57,9 +60,37 @@ defmodule JSTSP do
   defp build_model(model_list) do
     Enum.map(model_list, fn
       {:model_text, model} -> {:model_text, model}
-      model_file -> Path.join([:code.priv_dir(:jstsp), "mzn", model_file])
+      model_file -> Path.join([mzn_dir(), model_file])
     end)
   end
+
+  def job_cover(instance, opts \\ [])
+
+  def job_cover(instance, opts) when is_binary(instance) do
+    instance
+    |> instance_data()
+    |> job_cover(opts)
+  end
+
+  def job_cover(instance_data, solver_opts) when is_map(instance_data) do
+    solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
+    Logger.debug("Solver opts: #{inspect solver_opts}")
+    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts, :set_cover_model), instance_data, solver_opts)
+
+    res
+    |> MinizincResults.get_last_solution()
+    |> then(fn solution ->
+      %{
+        solver: res.summary.solver,
+        time_limit: solver_opts[:time_limit],
+        objective: MinizincResults.get_solution_objective(solution),
+        status: MinizincResults.get_status(res.summary),
+        cover: MinizincResults.get_solution_value(solution, "cover")
+      }
+    end)
+    |> Map.merge(instance_data)
+  end
+
 end
 
 defmodule JSTSP.MinizincHandler do

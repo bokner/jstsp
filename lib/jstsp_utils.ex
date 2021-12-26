@@ -6,8 +6,14 @@ defmodule JSTSP.Utils do
       solver: "cplex",
       solution_handler: JSTSP.MinizincHandler,
       time_limit: 300_000,
-      model: "jstsp.mzn"
+      model: "jstsp.mzn",
+      set_cover_model: "setcover.mzn",
+      extra_flags: "-I #{mzn_dir()}"
     ]
+  end
+
+  def mzn_dir() do
+    Path.join(:code.priv_dir(:jstsp), "mzn")
   end
 
   def instance_data(instance_file) do
