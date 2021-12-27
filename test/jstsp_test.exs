@@ -7,8 +7,8 @@ defmodule JstspTest do
   require Logger
 
   test "check the model output" do
-    model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
-    data_instance = Path.join([:code.priv_dir(:jstsp), "mzn", "da_silva1.dzn"])
+    model = Path.join(mzn_dir(), "jstsp.mzn")
+    data_instance = Path.join([mzn_dir(), "da_silva1.dzn"])
 
     {:ok, mzn_results} =
       MinizincSolver.solve_sync(model, data_instance,
@@ -34,7 +34,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, job_tools)
 
-    model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
+    model = Path.join([mzn_dir(), "jstsp.mzn"])
 
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
@@ -269,7 +269,7 @@ defmodule JstspTest do
 
   defp assert_schedule(schedule, data, objective) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
-    model = Path.join([:code.priv_dir(:jstsp), "mzn", "jstsp.mzn"])
+    model = Path.join([mzn_dir(), "jstsp.mzn"])
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
       Keyword.merge(default_solver_opts(),
