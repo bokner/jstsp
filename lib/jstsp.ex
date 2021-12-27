@@ -8,6 +8,7 @@ defmodule JSTSP do
   def run(instance, opts \\ [])
 
   def run(instance_file, opts) when is_binary(instance_file) do
+    opts = Keyword.merge(default_solver_opts(), opts)
     instance_file
     |> instance_data()
     |> run_model(opts)
