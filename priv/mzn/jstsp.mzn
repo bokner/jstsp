@@ -2,20 +2,12 @@
 %% Given the set T of tools,
 %% the set J of jobs, 
 %% the required set of tools for each of the jobs,
-%% and a capacity of magazine C -
+%% and a capacity of magazine C 
 %% find the schedule of jobs that minimizes the tool switches.
 
 include "globals.mzn";
-
-%% Input
-int: J;
-int: T;
-set of int: TOOLS = 1..T;
-set of int: JOBS = 1..J;
-
-array[JOBS, TOOLS] of 0..1:  job_tools;
-
-int: C;      
+   
+include "definitions.mzn";
 
 %% Decision vars
 array[JOBS] of var JOBS: schedule;
