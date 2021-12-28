@@ -4,8 +4,15 @@ include "definitions.mzn";
 
 array[JOBS] of var 0..1: cover;
 
+array[TOOLS] of var JOBS: intersection;
+
 constraint forall(t in TOOLS) (
-    sum(c in JOBS)(job_tools[c, t] * cover[c]) >= 1
+    intersection[t] = sum(c in JOBS)(job_tools[c, t] * cover[c])
 );
 
-solve minimize sum(cover);
+constraint forall(t in TOOLS) (
+    intersection[t] >= 1
+);
+
+
+solve minimize sum(cover) * T - sum(intersection);

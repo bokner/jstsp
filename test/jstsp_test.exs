@@ -129,8 +129,10 @@ defmodule JstspTest do
     ## ... and any reduction of job set cover does not cover it
     ## (that is, the cover cannot be reduced to its subset)
     Enum.each(0..length(cover_jobs) - 1, fn pos ->
-    refute Enum.all?(tool_matrix, fn tool -> Enum.sum(List.delete_at(tool, pos)) > 0 end)
+        refute Enum.all?(tool_matrix, fn tool -> Enum.sum(List.delete_at(tool, pos)) > 0
+      end)
     end)
+    assert length(cover_jobs) == 7
 
   end
 
