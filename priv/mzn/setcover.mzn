@@ -14,5 +14,8 @@ constraint forall(t in TOOLS) (
     intersection[t] >= 1
 );
 
+var 1..T*J: obj;
 
-solve minimize sum(cover) * T - sum(intersection);
+constraint obj = sum(cover) * T  - sum(i in TOOLS)(intersection[i] > 1);
+
+solve minimize obj;
