@@ -49,13 +49,13 @@ defmodule JSTSP do
         model -> build_model([model])
       end
 
-    case Keyword.get(opts, :upper_bound) do
-      nil ->
-        instance_model
-
-      upper_bound ->
-        [{:model_text, upper_bound_constraint(upper_bound)} | instance_model]
-    end
+    registered_constraints()
+    |> Enum.reduce(instance_model, fn {constraint, fun}, acc ->
+      case Keyword.get(opts, constraint) do
+        nil -> acc
+        arg -> [{:model_text, fun.(arg)} | acc]
+      end
+    end)
   end
 
   defp build_model(model_list) do
@@ -90,6 +90,14 @@ defmodule JSTSP do
       }
     end)
     |> Map.merge(instance_data)
+  end
+
+  def registered_constraints() do
+    [
+      upper_bound: &upper_bound_constraint/1,
+      schedule_constraint: &schedule_constraint/1,
+      warm_start: &schedule_warm_start/1
+    ]
   end
 
 end

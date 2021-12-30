@@ -110,6 +110,14 @@ defmodule JSTSP.Utils do
     "constraint schedule = #{inspect(schedule)};"
   end
 
+  def schedule_warm_start(schedule) do
+    """
+    annotation warm_start(schedule,
+      #{MinizincData.elixir_to_dzn(schedule)}
+    );
+    """
+  end
+
   def count_switches(schedule, magazine) do
     magazine_sequence =
       Enum.map(
