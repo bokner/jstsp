@@ -5,39 +5,18 @@
 %% and a capacity of magazine C 
 %% find the schedule of jobs that minimizes the tool switches.
 
-include "globals.mzn";
+
+include "jstsp_types.mzn";
    
-include "definitions.mzn";
+include "jstsp_pars.mzn";
 
-%% Decision vars
-array[JOBS] of var JOBS: schedule;
+include "jstsp_vars.mzn";
 
-constraint all_different(schedule);
+include "jstsp_constraints.mzn";
 
-%% Magazine content
-array[JOBS, TOOLS] of var 0..1: magazine; 
+include "predicates_functions.mzn";
 
-constraint forall(i in JOBS, j in TOOLS)(
-  magazine[i, j] >= job_tools[i, j]
-);
-
-constraint forall(i in JOBS)(
-  sum(row(magazine, i)) = C
-);
-
-%% Symmetry breaks
-constraint schedule[1] < schedule[J];
+include "solve_definition.mzn";
 
 
-
-var int: cost; 
-
-constraint cost = sum(i in 1..J-1)(switches(i, i+1));
-
-constraint cost >= T - C;
-
-solve minimize cost;
-
-function var int: switches(int: current_job, int: next_job) =
-         sum(t in TOOLS)(bool2int(magazine[schedule[next_job], t] > magazine[schedule[current_job], t]));
 
