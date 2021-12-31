@@ -25,7 +25,7 @@ defmodule JSTSP.Results do
   end
 
   defp update_option_arg(:warm_start, data) do
-    data.schedule
+    %{schedule: data.schedule}
   end
 
   def parse_results(csv_results) do

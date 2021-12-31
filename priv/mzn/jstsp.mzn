@@ -4,9 +4,6 @@
 %% the required set of tools for each of the jobs,
 %% and a capacity of magazine C 
 %% find the schedule of jobs that minimizes the tool switches.
-
-
-include "jstsp_types.mzn";
    
 include "jstsp_pars.mzn";
 

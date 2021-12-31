@@ -6,10 +6,22 @@ defmodule JSTSP.Utils do
       solver: "cplex",
       solution_handler: JSTSP.MinizincHandler,
       time_limit: 300_000,
-      model: "jstsp.mzn",
+      model: standard_model(),
       set_cover_model: "setcover.mzn",
       extra_flags: "-I #{mzn_dir()}"
     ]
+  end
+
+  def standard_model() do
+    ["solve_definition.mzn" | core_model()]
+  end
+
+  def core_model() do
+    [
+      "jstsp_pars.mzn",
+      "jstsp_vars.mzn",
+    "jstsp_constraints.mzn",
+    "predicates_functions.mzn"]
   end
 
   def mzn_dir() do

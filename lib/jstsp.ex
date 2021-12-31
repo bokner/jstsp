@@ -40,29 +40,52 @@ defmodule JSTSP do
     |> Map.merge(instance_data)
   end
 
-  defp get_model(opts, model_type \\ :model)
+  defp get_model(opts) do
+    opts = Keyword.merge(default_solver_opts(), opts)
+    base_model = case Keyword.get(opts, :warm_start) do
+      nil -> standard_model()
+      warm_start_map ->
+        [warm_start_model(warm_start_map) | core_model()]
+    end
 
-  defp get_model(opts, model_type) do
-    instance_model =
-      case Keyword.get(opts, model_type) do
-        model when is_list(model) -> build_model(model)
-        model -> build_model([model])
-      end
+    case Keyword.get(opts, :upper_bound) do
+      nil -> base_model
+      upper_bound -> [{:model_text, upper_bound_constraint(upper_bound)} | base_model]
+    end
+    |> adjust_model_paths()
+  end
 
-    registered_constraints()
-    |> Enum.reduce(instance_model, fn {constraint, fun}, acc ->
-      case Keyword.get(opts, constraint) do
-        nil -> acc
-        arg -> [{:model_text, fun.(arg)} | acc]
-      end
+
+  defp adjust_model_paths(model_list) when is_list(model_list) do
+    Enum.map(model_list,
+    fn {:model_text, _} = model_item -> model_item
+      model_file -> Path.join(mzn_dir(), model_file)
     end)
   end
 
-  defp build_model(model_list) do
-    Enum.map(model_list, fn
-      {:model_text, model} -> {:model_text, model}
-      model_file -> Path.join([mzn_dir(), model_file])
-    end)
+  defp adjust_model_paths(model) do
+    adjust_model_paths([model])
+  end
+
+  defp warm_start_model(warm_start_map) do
+    # warm_start_pars =
+    # warm_start_map
+    # |> Enum.map(fn {var, val} -> {"#{var}_warmup", val} end)
+    # |> Map.new()
+    # |> MinizincData.to_dzn()
+
+    warm_start_annotations =
+      warm_start_map
+      |> Enum.map(fn {var, val} -> "warm_start( #{var}, #{MinizincData.elixir_to_dzn(val)})" end)
+      |> Enum.join(",\n")
+
+    {:model_text,
+      """
+      solve
+        ::
+      #{warm_start_annotations}
+      minimize cost;
+      """}
   end
 
   def job_cover(instance, opts \\ [])
@@ -76,7 +99,11 @@ defmodule JSTSP do
   def job_cover(instance_data, solver_opts) when is_map(instance_data) do
     solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
     Logger.debug("Solver opts: #{inspect solver_opts}")
-    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts, :set_cover_model), instance_data, solver_opts)
+    model =
+      solver_opts
+      |> Keyword.get(:set_cover_model)
+      |> adjust_model_paths()
+    {:ok, res} = MinizincSolver.solve_sync(model, instance_data, solver_opts)
 
     res
     |> MinizincResults.get_last_solution()
@@ -92,7 +119,7 @@ defmodule JSTSP do
     |> Map.merge(instance_data)
   end
 
-  def registered_constraints() do
+  def registered_model_opts() do
     [
       upper_bound: &upper_bound_constraint/1,
       schedule_constraint: &schedule_constraint/1,
