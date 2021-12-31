@@ -11,8 +11,21 @@ defmodule JSTSP.Results do
     |> Enum.with_index(1)
     |> Enum.map(fn {rec, idx} ->
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
-      JSTSP.run(rec.instance, Keyword.put(opts, :upper_bound, rec.objective))
+      opts =
+        Keyword.get(opts, :methods, [:upper_bound])
+        |> Enum.reduce(opts, fn update_option, acc ->
+
+        Keyword.put(acc, update_option, update_option_arg(update_option, rec)) end)
+      JSTSP.run(rec.instance, opts)
     end)
+  end
+
+  defp update_option_arg(:upper_bound, data) do
+    data.objective
+  end
+
+  defp update_option_arg(:warm_start, data) do
+    data.schedule
   end
 
   def parse_results(csv_results) do
@@ -35,16 +48,16 @@ defmodule JSTSP.Results do
 
   def yanasse_beam_search_results() do
     obks = [
-      {"L22-3", 18},
-      {"L22-4", 15},
-      {"L22-5", 17},
-      {"L22-6", 15},
-      {"L22-8", 19},
-      {"L22-9", 18},
-      {"L22-10", 16},
-      {"L23-2", 10},
-      {"L23-3", 10},
-      {"L25-6", 5}
+      %{instance: "L22-3", obks: 18, our: 23},
+      %{instance: "L22-4", obks: 15, our: 18},
+      %{instance: "L22-5", obks: 17, our: 19},
+      %{instance: "L22-6", obks: 15, our: 17},
+      %{instance: "L22-8", obks: 19, our: 21},
+      %{instance: "L22-9", obks: 18, our: 21},
+      %{instance: "L22-10", obks: 16, our: 20},
+      %{instance: "L23-2", obks: 10, our: 11},
+      %{instance: "L23-3", obks: 10, our: 11},
+      %{instance: "L25-6", obks: 5, our: 6}
     ]
 
     Enum.map(obks, fn {name, _value} ->
