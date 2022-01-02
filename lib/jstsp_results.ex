@@ -41,11 +41,21 @@ defmodule JSTSP.Results do
         T: String.to_integer(rec["T"]),
         J: String.to_integer(rec["J"]),
         C: String.to_integer(rec["C"]),
-        solver: rec["solver"]
+        solver: rec["solver"],
+        time_limit: rec["time_limit(msec)"]
       }
     end)
   end
 
+  def merge_results(prev_results, new_results) do
+    new_results_by_instance = Enum.group_by(new_results, & &1.instance)
+    Enum.map(prev_results,
+      fn rec -> rec.status in [:optimal, "optimal"] &&
+        rec || ([new_rec] = Map.get(new_results_by_instance, rec.instance);
+        (new_rec.status in [:optimal, "optimal"] || new_rec.objective < rec.objective)
+        && new_rec || rec)
+      end)
+  end
   def yanasse_beam_search_results() do
     obks = [
       %{instance: "L22-3", obks: 18, our: 22, ys: 18.2},

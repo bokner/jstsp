@@ -103,7 +103,8 @@ defmodule JSTSP.Utils do
           schedule: schedule
         }
       ) do
-    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{inspect(schedule)}\""
+    schedule_str = is_list(schedule) && "#{inspect schedule}" || schedule
+    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{schedule_str}\""
   end
 
   def non_optimal_results(csv_file) do
