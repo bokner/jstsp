@@ -13,6 +13,7 @@ constraint forall(i in JOBS)(
 %% Symmetry breaks
 constraint schedule[1] < schedule[J];
 
-constraint cost = sum(i in 1..J-1)(switches(i, i+1));
+constraint cost = total_switches([i | i in 1..J]); 
 
+% Trivial lower bound
 constraint cost >= T - C;
