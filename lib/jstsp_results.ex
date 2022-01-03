@@ -1,5 +1,6 @@
 defmodule JSTSP.Results do
   require Logger
+  import JSTSP.Utils
 
   def update_results(results_csv, opts) do
     prev_results = parse_results(results_csv)
@@ -57,6 +58,21 @@ defmodule JSTSP.Results do
         (new_rec.status in [:optimal, "optimal"] || new_rec.objective < rec.objective)
         && new_rec || rec)
       end)
+  end
+
+  def get_lower_bounds(csv_results) do
+    csv_results
+    |> parse_results()
+    |> tap(fn instances ->
+      :erlang.put(:instance_num, length(instances))
+    end)
+    |> Enum.with_index(1)
+    |> Enum.map(fn {rec, idx} ->
+      Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
+      data = instance_data(rec.instance)
+      {rec.instance,
+      JSTSP.get_lower_bound(data),
+      JSTSP.get_trivial_lower_bound(data)} end)
   end
   def yanasse_beam_search_results() do
     obks = [

@@ -119,6 +119,32 @@ defmodule JSTSP do
     |> Map.merge(instance_data)
   end
 
+  def get_lower_bound(instance_data, opts \\ [])
+
+  def get_lower_bound(instance_data, solver_opts) when is_map(instance_data) do
+    solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
+    instance_data
+      |> job_cover(solver_opts)
+      |> run_on_cover(solver_opts)
+      |> then(fn res -> Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0 end)
+  end
+
+  def get_trivial_lower_bound(_instance_data = %{T: tool_num, C: magazine_capacity}) do
+    tool_num - magazine_capacity
+  end
+
+  defp run_on_cover(cover_results = %{job_tools: job_tools, cover: cover}, opts) do
+      job_tools
+      |> Enum.zip(cover)
+      |> Enum.flat_map(fn {job, cover_flag} -> cover_flag == 1 && [job] || [] end)
+      |> then(fn reduced_jobs ->
+        cover_results
+        |> Map.take([:C, :T])
+        |> Map.put(:job_tools, reduced_jobs)
+        |> Map.put(:J, length(reduced_jobs))
+      end)
+      |> run_model(opts)
+  end
   def registered_model_opts() do
     [
       upper_bound: &upper_bound_constraint/1,

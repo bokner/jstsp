@@ -137,6 +137,24 @@ defmodule JstspTest do
 
   end
 
+  @tag timeout: 150_000
+  test "lower bound on set cover" do
+    solver_opts =
+    [solver: "cplex",
+    solution_handler: JSTSP.MinizincHandler,
+    time_limit: 120_000]
+
+    instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
+    data = instance_data(instance)
+    lb = JSTSP.get_lower_bound(data, solver_opts)
+
+    ## Lower bound based on set-cover method
+    assert lb == 50
+    ## Trivial lower bound
+    assert JSTSP.get_trivial_lower_bound(data) == 40
+
+  end
+
   defp jstsp_sample() do
     %{
       job_tools: [
