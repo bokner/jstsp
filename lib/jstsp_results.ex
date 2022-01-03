@@ -2,8 +2,9 @@ defmodule JSTSP.Results do
   require Logger
 
   def update_results(results_csv, opts) do
-    results_csv
-    |> parse_results()
+    prev_results = parse_results(results_csv)
+
+    prev_results
     |> Enum.reject(fn rec -> rec.status == "optimal" end)
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
@@ -18,6 +19,7 @@ defmodule JSTSP.Results do
         Keyword.put(acc, update_option, update_option_arg(update_option, rec)) end)
       JSTSP.run(rec.instance, opts)
     end)
+    |> merge_results(prev_results)
   end
 
   defp update_option_arg(:upper_bound, data) do
@@ -47,7 +49,7 @@ defmodule JSTSP.Results do
     end)
   end
 
-  def merge_results(prev_results, new_results) do
+  def merge_results(new_results, prev_results) do
     new_results_by_instance = Enum.group_by(new_results, & &1.instance)
     Enum.map(prev_results,
       fn rec -> rec.status in [:optimal, "optimal"] &&
