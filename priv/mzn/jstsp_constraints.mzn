@@ -10,7 +10,7 @@ constraint forall(i in JOBS)(
   sum(row(magazine, i)) = C
 );
 
-%% Symmetry breaks
+%% Symmetry
 constraint schedule[1] < schedule[J];
 %constraint schedule[1] = arg_max(tool_count_by_job);
 %constraint tool_count_by_job[schedule[1]] = max_tools;

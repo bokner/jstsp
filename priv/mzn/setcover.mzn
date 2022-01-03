@@ -10,12 +10,16 @@ constraint forall(t in TOOLS) (
     tool_count[t] = sum(c in JOBS)(job_tools[c, t] * cover[c])
 );
 
-constraint forall(t in TOOLS) (
-    tool_count[t] >= 1
-);
+constraint set_cover(cover, job_tools);
 
 var 1..T*J: obj;
 
 constraint obj = sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
 
 solve minimize obj;
+
+predicate set_cover(array[JOBS] of var 0..1: cover, array[JOBS, TOOLS] of 0..1: sets) = let {
+  array[TOOLS] of var JOBS: tool_count;} in 
+  forall(t in index_set(cover)) (
+    sum(c in index_set(JOBS))(sets[c, t] * cover[c]) >= 1
+);
