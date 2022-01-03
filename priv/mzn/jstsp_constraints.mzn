@@ -12,8 +12,14 @@ constraint forall(i in JOBS)(
 
 %% Symmetry breaks
 constraint schedule[1] < schedule[J];
+%constraint schedule[1] = arg_max(tool_count_by_job);
+%constraint tool_count_by_job[schedule[1]] = max_tools;
+%constraint (tool_count_by_job[schedule[J]] == max_tools) -> (schedule[1] < schedule[J]);
+
 
 constraint cost = total_switches([i | i in 1..J]); 
 
 % Trivial lower bound
 constraint cost >= T - C;
+
+%output [show([tool_count_by_job[schedule[i]] | i in JOBS])];
