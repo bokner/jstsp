@@ -108,10 +108,11 @@ defmodule JstspTest do
         solver: "yuck",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 120_000,
+        #warm_start: %{schedule: reduced_list},
         upper_bound: ys_optimal
       )
 
-    assert model_results.objective == 13
+    assert model_results.objective == ys_optimal
   end
 
   test "set cover" do
