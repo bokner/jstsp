@@ -4,7 +4,7 @@ include "jstsp_pars.mzn";
 
 array[JOBS] of var 0..1: cover;
 
-array[TOOLS] of var JOBS: tool_count;
+array[TOOLS] of var 0..J: tool_count;
 
 constraint forall(t in TOOLS) (
     tool_count[t] = sum(c in JOBS)(job_tools[c, t] * cover[c])
