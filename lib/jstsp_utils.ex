@@ -8,7 +8,7 @@ defmodule JSTSP.Utils do
       time_limit: 300_000,
       model: standard_model(),
       set_cover_model: "setcover.mzn",
-      extra_flags: "-I #{mzn_dir()}"
+      extra_flags: [mzn_dir_flag(), "#{ignore_symmetry_flag(false)}"]
     ]
   end
 
@@ -162,8 +162,12 @@ defmodule JSTSP.Utils do
     end)
   end
 
-  def ignore_symmetry_flag() do
-    "-D mzn_ignore_symmetry_breaking_constraints=true"
+  def ignore_symmetry_flag(bool) do
+    "-D mzn_ignore_symmetry_breaking_constraints=#{bool}"
+  end
+
+  def mzn_dir_flag() do
+    "-I #{mzn_dir()}"
   end
 
   defp to_toolset(tools) do

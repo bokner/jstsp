@@ -287,15 +287,13 @@ defmodule JstspTest do
 
   defp assert_schedule(schedule, data, objective) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
-    opts_ignore_symmetry = Keyword.update(default_solver_opts(), :extra_flags, "",
-    fn flags -> "#{flags} #{ignore_symmetry_flag()}" end)
     model = Path.join([mzn_dir(), "jstsp.mzn"])
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
-      Keyword.merge(opts_ignore_symmetry,
+        extra_flags: [mzn_dir_flag(), ignore_symmetry_flag(true)],
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 1200_000)
+        time_limit: 1200_000
       )
 
     model_results = model_results(mzn_results)
