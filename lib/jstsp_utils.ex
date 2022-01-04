@@ -12,6 +12,10 @@ defmodule JSTSP.Utils do
     ]
   end
 
+  ## Build solver opts from model opts
+  def build_solver_opts(model_opts) do
+    Keyword.merge(default_solver_opts(), model_opts)
+  end
   def standard_model() do
     ["solve_definition.mzn" | core_model()]
   end

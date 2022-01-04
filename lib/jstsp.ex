@@ -8,7 +8,6 @@ defmodule JSTSP do
   def run(instance, opts \\ [])
 
   def run(instance_file, opts) when is_binary(instance_file) do
-    opts = Keyword.merge(default_solver_opts(), opts)
     instance_file
     |> instance_data()
     |> run_model(opts)
@@ -20,8 +19,8 @@ defmodule JSTSP do
   """
   def run_model(instance, opts \\ [])
 
-  def run_model(instance_data, solver_opts) do
-    solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
+  def run_model(instance_data, opts) do
+    solver_opts = build_solver_opts(opts)
 
     {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts), instance_data, solver_opts)
 
@@ -43,7 +42,7 @@ defmodule JSTSP do
   end
 
   defp get_model(opts) do
-    opts = Keyword.merge(default_solver_opts(), opts)
+    opts = build_solver_opts(opts)
     base_model = case Keyword.get(opts, :warm_start) do
       nil -> opts[:model]
       warm_start_map ->
@@ -98,8 +97,8 @@ defmodule JSTSP do
     |> job_cover(opts)
   end
 
-  def job_cover(instance_data, solver_opts) when is_map(instance_data) do
-    solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
+  def job_cover(instance_data, opts) when is_map(instance_data) do
+    solver_opts = build_solver_opts(opts)
     Logger.debug("Solver opts: #{inspect solver_opts}")
     model =
       solver_opts
@@ -123,8 +122,8 @@ defmodule JSTSP do
 
   def get_lower_bound(instance_data, opts \\ [])
 
-  def get_lower_bound(instance_data, solver_opts) when is_map(instance_data) do
-    solver_opts = Keyword.merge(default_solver_opts(), solver_opts)
+  def get_lower_bound(instance_data, opts) when is_map(instance_data) do
+    solver_opts = build_solver_opts(opts)
     instance_data
       |> job_cover(solver_opts)
       |> run_on_cover(solver_opts)
