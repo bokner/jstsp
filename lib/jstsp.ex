@@ -133,6 +133,10 @@ defmodule JSTSP do
     tool_num - magazine_capacity
   end
 
+  defp run_on_cover(cover_results = %{cover: nil}, _opts) do
+    cover_results
+  end
+
   defp run_on_cover(cover_results = %{job_tools: job_tools, cover: cover}, opts) do
       job_tools
       |> Enum.zip(cover)
