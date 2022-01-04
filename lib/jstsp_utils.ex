@@ -28,7 +28,11 @@ defmodule JSTSP.Utils do
     Path.join(:code.priv_dir(:jstsp), "mzn")
   end
 
-  def instance_data(instance_file) do
+  def instance_data(file) do
+    Path.extname(file) == ".dzn" && file || parse_instance_file(file)
+  end
+
+  defp parse_instance_file(instance_file) do
     parsed_data =
       instance_file
       |> File.read!()
@@ -59,6 +63,7 @@ defmodule JSTSP.Utils do
       C: c,
       job_tools: job_tool_matrix
     }
+
   end
 
   def transpose(matrix) do
@@ -156,7 +161,7 @@ defmodule JSTSP.Utils do
   def ignore_symmetry_flag() do
     "-D mzn_ignore_symmetry_breaking_constraints=true"
   end
-  
+
   defp to_toolset(tools) do
     tools
     |> Enum.with_index(1)

@@ -7,17 +7,15 @@ defmodule JstspTest do
   require Logger
 
   test "check the model output" do
-    model = Path.join(mzn_dir(), "jstsp.mzn")
+
     data_instance = Path.join([mzn_dir(), "da_silva1.dzn"])
 
-    {:ok, mzn_results} =
-      MinizincSolver.solve_sync(model, data_instance,
-        Keyword.merge(default_solver_opts(),
+    model_results =
+      JSTSP.run_model(data_instance,
+        model: standard_model(),
         solver: "gecode",
-        solution_handler: JSTSP.MinizincHandler)
+        solution_handler: JSTSP.MinizincHandler
       )
-
-    model_results = model_results(mzn_results)
 
     switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective
@@ -36,15 +34,14 @@ defmodule JstspTest do
 
     model = Path.join([mzn_dir(), "jstsp.mzn"])
 
-    {:ok, mzn_results} =
-      MinizincSolver.solve_sync([model, solution_constraint], data,
-      Keyword.merge(default_solver_opts(),
+    model_results =
+      JSTSP.run_model(data,
         solver: "cplex",
+        model: [solution_constraint | standard_model()],
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 150_000)
+        methods: [],
+        time_limit: 150_000
       )
-
-    model_results = model_results(mzn_results)
 
     switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective

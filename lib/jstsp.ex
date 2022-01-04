@@ -37,13 +37,15 @@ defmodule JSTSP do
         magazine: MinizincResults.get_solution_value(solution, "magazine")
       }
     end)
-    |> Map.merge(instance_data)
+    |> then(fn res ->
+      is_map(instance_data) && Map.merge(res, instance_data)
+      || res end)
   end
 
   defp get_model(opts) do
     opts = Keyword.merge(default_solver_opts(), opts)
     base_model = case Keyword.get(opts, :warm_start) do
-      nil -> standard_model()
+      nil -> opts[:model]
       warm_start_map ->
         [warm_start_model(warm_start_map) | core_model()]
     end
