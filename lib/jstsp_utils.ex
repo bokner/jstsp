@@ -153,6 +153,10 @@ defmodule JSTSP.Utils do
     end)
   end
 
+  def ignore_symmetry_flag() do
+    "-D mzn_ignore_symmetry_breaking_constraints=true"
+  end
+  
   defp to_toolset(tools) do
     tools
     |> Enum.with_index(1)

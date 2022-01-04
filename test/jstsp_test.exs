@@ -257,7 +257,7 @@ defmodule JstspTest do
       T: 15,
       C: 10,
       jobs: jobs,
-      schedule: Enum.reverse([11, 22,
+      schedule: [11, 22,
       5, 2, ## dominated jobs
       14, 21,
       8, ## dominated
@@ -273,7 +273,7 @@ defmodule JstspTest do
       4, ## dominated,
       25,
       6, 9 ## dominated
-      ])}
+      ]}
   end
 
   defp model_results(mzn_results) do
@@ -290,10 +290,12 @@ defmodule JstspTest do
 
   defp assert_schedule(schedule, data, objective) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
+    opts_ignore_symmetry = Keyword.update(default_solver_opts(), :extra_flags, "",
+    fn flags -> "#{flags} #{ignore_symmetry_flag()}" end)
     model = Path.join([mzn_dir(), "jstsp.mzn"])
     {:ok, mzn_results} =
       MinizincSolver.solve_sync([model, solution_constraint], data,
-      Keyword.merge(default_solver_opts(),
+      Keyword.merge(opts_ignore_symmetry,
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 1200_000)
