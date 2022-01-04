@@ -1,5 +1,7 @@
 set of int: TOOLS = 1..T;
+set of int: TOOLS0 = 0..T;
 set of int: JOBS = 1..J;
+set of int: JOBS0 = 0..J;
 %% Input
 int: J;
 int: T;

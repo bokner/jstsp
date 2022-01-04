@@ -8,7 +8,7 @@ defmodule JSTSP.Utils do
       time_limit: 300_000,
       model: standard_model(),
       set_cover_model: "setcover.mzn",
-      extra_flags: [mzn_dir_flag(), "#{ignore_symmetry_flag(false)}"]
+      extra_flags: [mzn_dir_flag(), ignore_symmetry_flag(false)]
     ]
   end
 
@@ -65,7 +65,6 @@ defmodule JSTSP.Utils do
       T: t,
       J: j,
       C: c,
-      job_tools: job_tool_matrix
     }
 
   end
@@ -229,7 +228,6 @@ defmodule JSTSP.Utils do
       fn {_d, by} -> by end, fn {d, _by} -> d end)
       schedule
       |> merge_dominated_impl(dominance_map)
-      |> valid_schedule_order()
   end
 
   defp merge_dominated_impl(schedule, dominance_map) when map_size(dominance_map) == 0 do
@@ -246,10 +244,4 @@ defmodule JSTSP.Utils do
 
   end
 
-  ## To be compatible with the model constraints,
-  ## we flip the schedule so the head is less than tail
-  def valid_schedule_order(schedule) do
-    hd(schedule) > List.last(schedule) && Enum.reverse(schedule)
-    || schedule
-  end
 end
