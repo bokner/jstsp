@@ -20,6 +20,6 @@ solve minimize obj;
 
 predicate set_cover(array[JOBS] of var 0..1: cover, array[JOBS, TOOLS] of 0..1: sets) = let {
   array[TOOLS] of var JOBS: tool_count;} in 
-  forall(t in index_set(cover)) (
-    sum(c in index_set(JOBS))(sets[c, t] * cover[c]) >= 1
+  forall(t in TOOLS) (
+    sum(c in JOBS)(sets[c, t] * cover[c]) >= 1
 );
