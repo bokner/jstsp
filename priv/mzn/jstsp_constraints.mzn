@@ -16,6 +16,9 @@ constraint symmetry_breaking_constraint(schedule[1] < schedule[J]);
 %constraint tool_count_by_job[schedule[1]] = max_tools;
 %constraint (tool_count_by_job[schedule[J]] == max_tools) -> (schedule[1] < schedule[J]);
 
+constraint forall(i in 1..J-1) (
+  switches(i, i+1) <= tool_diff(i, i + 1)
+);
 
 constraint cost = total_switches([i | i in 1..J]); 
 

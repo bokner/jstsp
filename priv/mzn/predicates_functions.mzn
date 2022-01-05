@@ -7,5 +7,6 @@ function var int: total_switches(array[int] of var JOBS: jobs) =
         switches(jobs[i], jobs[i+1])
     );
 
+% How many switches is required for sequence (job1, job2)? 
 function TOOLS0: tool_diff(JOBS: job1, JOBS: job2) = 
-    sum(t in TOOLS)(job_tools[job1, t] > job_tools[job2, t]);
+    sum(t in TOOLS)(job_tools[job1, t] < job_tools[job2, t]);
