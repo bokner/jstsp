@@ -1,6 +1,8 @@
 % Find minimal (by cardinality and the number of shared tools) set cover for given set of jobs.
 % Each job is a set of tools it requires for completion.
 include "jstsp_pars.mzn";
+include "predicates_functions.mzn";
+include "jstsp_vars.mzn";
 
 array[JOBS] of var 0..1: cover;
 
