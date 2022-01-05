@@ -65,6 +65,7 @@ defmodule JSTSP.Utils do
       T: t,
       J: j,
       C: c,
+      job_tools: job_tool_matrix
     }
 
   end
@@ -243,5 +244,4 @@ defmodule JSTSP.Utils do
     merge_dominated_impl(schedule, dominance_map)
 
   end
-
 end

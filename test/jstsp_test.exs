@@ -43,10 +43,11 @@ defmodule JstspTest do
         time_limit: 150_000
       )
 
+    ys_optimal = 13
     switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective
     ## The optimal value claimed by Yanasse, Senne
-    assert model_results.objective == 13
+    assert model_results.objective == ys_optimal
     ## ... is obtained by our model with different schedule
     assert model_results.schedule == our_schedule
   end
@@ -55,16 +56,17 @@ defmodule JstspTest do
     sample = jstsp_set_sample2()
     job_tools = to_matrix(sample.jobs)
 
+    ys_optimal = 13
     data =
       sample
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, job_tools)
 
     ## The optimal value claimed by Yanasse, Senne
-    assert_schedule(sample.schedule, data, 13)
+    assert_schedule(sample.schedule, data, ys_optimal)
   end
 
-  @tag timeout: 150_000
+  @tag timeout: 180_000
   test "dominant/dominated jobs" do
     ## Following Y/S example ('An enumeration algorithm....')
     ys_optimal = 13 ## The optimal value claimed by Y/S
@@ -104,9 +106,9 @@ defmodule JstspTest do
     model_results = JSTSP.run_model(data,
         solver: "yuck",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 120_000,
+        time_limit: 150_000,
         #warm_start: %{schedule: reduced_list},
-        upper_bound: ys_optimal
+        #upper_bound: ys_optimal + 5
       )
 
     assert model_results.objective == ys_optimal
@@ -273,30 +275,16 @@ defmodule JstspTest do
       ]}
   end
 
-  defp model_results(mzn_results) do
-    mzn_results
-    |> MinizincResults.get_last_solution()
-    |> then(fn solution ->
-      %{
-        schedule: MinizincResults.get_solution_value(solution, "schedule"),
-        magazine: MinizincResults.get_solution_value(solution, "magazine"),
-        objective: MinizincResults.get_solution_objective(solution)
-      }
-    end)
-  end
-
   defp assert_schedule(schedule, data, objective) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
-    model = Path.join([mzn_dir(), "jstsp.mzn"])
-    {:ok, mzn_results} =
-      MinizincSolver.solve_sync([model, solution_constraint], data,
+    model_results =
+      JSTSP.run_model(data,
+        model: ["jstsp.mzn", solution_constraint],
         extra_flags: [mzn_dir_flag(), ignore_symmetry_flag(true)],
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 1200_000
       )
-
-    model_results = model_results(mzn_results)
 
     switches = count_switches(model_results.schedule, model_results.magazine)
     assert switches == model_results.objective
