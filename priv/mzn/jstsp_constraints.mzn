@@ -16,11 +16,14 @@ constraint symmetry_breaking_constraint(schedule[1] < schedule[J]);
 %constraint tool_count_by_job[schedule[1]] = max_tools;
 %constraint (tool_count_by_job[schedule[J]] == max_tools) -> (schedule[1] < schedule[J]);
 
+array[1..J-1] of var TOOLS0: magazine_switches;
+
 constraint forall(i in 1..J-1) (
-  switches(i, i+1) <= tool_diff(i, i + 1)
+  magazine_switches[i] = switches(i, i+1) 
+  /\ magazine_switches[i] <= tool_diff(schedule[i], schedule[i + 1])
 );
 
-constraint cost = total_switches([i | i in 1..J]); 
+constraint cost = sum(magazine_switches); 
 
 % Trivial lower bound
 constraint cost >= T - C;
