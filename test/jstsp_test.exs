@@ -66,7 +66,7 @@ defmodule JstspTest do
     assert_schedule(sample.schedule, data, ys_optimal)
   end
 
-  @tag timeout: 180_000
+  @tag timeout: 150_000
   test "dominant/dominated jobs" do
     ## Following Y/S example ('An enumeration algorithm....')
     ys_optimal = 13 ## The optimal value claimed by Y/S
@@ -106,9 +106,9 @@ defmodule JstspTest do
     model_results = JSTSP.run_model(data,
         solver: "yuck",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 150_000,
-        #warm_start: %{schedule: reduced_list},
-        #upper_bound: ys_optimal + 5
+        time_limit: 120_000,
+        warm_start: %{schedule: reduced_list},
+        upper_bound: ys_optimal + 5
       )
 
     assert model_results.objective == ys_optimal
@@ -144,7 +144,7 @@ defmodule JstspTest do
     time_limit: 120_000]
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    data = instance_data(instance)
+    data = get_instance_data(instance)
     lb = JSTSP.get_lower_bound(data, solver_opts)
 
     ## Lower bound based on set-cover method
