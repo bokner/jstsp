@@ -65,13 +65,21 @@ defmodule JSTSP do
   defp add_constraints(model, :upper_bound, _instance_data, opts) do
     case Keyword.get(opts, :upper_bound) do
       nil -> model
-      upper_bound -> [inline_model(upper_bound_constraint(upper_bound)) | model]
+      upper_bound when is_integer(upper_bound) ->
+        [inline_model(upper_bound_constraint(upper_bound)) | model]
     end
   end
 
-  defp add_constraints(model, :lower_bound, _instance_data, opts) do
-    lower_bound = Keyword.get(opts, :lower_bound)
-    [inline_model(lower_bound_constraint(lower_bound)) | model]
+  defp add_constraints(model, :lower_bound, instance_data, opts) do
+    lb_constraint = case Keyword.get(opts, :lower_bound) do
+      lower_bound when is_integer(lower_bound) ->
+        lower_bound_constraint(lower_bound)
+      lower_bound_fun when is_function(lower_bound_fun) ->
+        Logger.debug("JOB TOOLS (add_constraints): #{inspect instance_data.job_tools}")
+        lower_bound_fun.(instance_data, opts)
+      _lower_bound -> nil
+    end
+    [inline_model(lb_constraint) | model]
   end
 
   defp adjust_model_paths(model_list) when is_list(model_list) do
@@ -110,7 +118,6 @@ defmodule JSTSP do
 
   def job_cover(instance_data, opts) when is_map(instance_data) do
     solver_opts = build_solver_opts(opts)
-    Logger.debug("Solver opts: #{inspect solver_opts}")
     model =
       solver_opts
       |> Keyword.get(:set_cover_model)
@@ -135,12 +142,23 @@ defmodule JSTSP do
 
   def get_lower_bound(instance_data, opts) when is_map(instance_data) do
     solver_opts = build_solver_opts(opts)
+    Logger.debug("JOB TOOLS (get_lower_bound): #{inspect instance_data.job_tools}")
     instance_data
       |> job_cover(solver_opts)
       |> run_on_cover(solver_opts)
-      |> then(fn res -> Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0 end)
+      |> then(fn res ->
+        lower_bound =
+        Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0
+        %{lower_bound: lower_bound,
+          partial_schedule: get_partial_schedule(Map.get(res, :schedule), instance_data)
+        }
+      end)
   end
 
+  defp get_partial_schedule(set_cover_schedule, res) do
+    Logger.debug("In partial schedule: #{inspect res}")
+    set_cover_schedule
+  end
   def get_trivial_lower_bound(_instance_data = %{T: tool_num, C: magazine_capacity}) do
     tool_num - magazine_capacity
   end
@@ -161,6 +179,7 @@ defmodule JSTSP do
       end)
       |> run_model(opts)
   end
+
   def registered_model_opts() do
     [
       upper_bound: &upper_bound_constraint/1,

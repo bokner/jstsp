@@ -132,6 +132,10 @@ defmodule JSTSP.Utils do
     "constraint cost >= #{lower_bound};"
   end
 
+  def lower_bound_constraint(lower_bound_map) when is_map(lower_bound_map) do
+    lower_bound_constraint(lower_bound_map.lower_bound)
+  end
+
   def lower_bound_constraint(_lower_bound) do
     ""
   end
@@ -179,7 +183,7 @@ defmodule JSTSP.Utils do
   end
 
   def inline_model(model_text) do
-    {:model_text, model_text}
+    {:model_text, model_text && model_text || ""}
   end
 
   defp to_toolset(tools) do

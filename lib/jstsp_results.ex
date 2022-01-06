@@ -1,6 +1,7 @@
 defmodule JSTSP.Results do
   require Logger
   import JSTSP.Utils
+  import JSTSP
 
   def update_results(results_csv, opts) do
     prev_results = parse_results(results_csv)
@@ -31,8 +32,12 @@ defmodule JSTSP.Results do
     %{schedule: data.schedule}
   end
 
-  defp update_option_arg(:lower_bound, data, _opts) do
-    data[:T] - data[:C]
+  defp update_option_arg(:lower_bound, _data, _opts) do
+    # This is a lazy call; the arguments will be passed
+    # to the func by JSTSP.run_model/2
+    fn(data, _opts) ->
+      lower_bound_constraint(
+      get_lower_bound(data)) end
   end
 
   def parse_results(csv_results) do
