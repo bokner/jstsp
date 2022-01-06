@@ -69,7 +69,7 @@ defmodule JSTSP.Results do
     |> Enum.with_index(1)
     |> Enum.map(fn {rec, idx} ->
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
-      data = instance_data(rec.instance)
+      data = get_instance_data(rec.instance)
       {rec.instance,
       JSTSP.get_lower_bound(data),
       JSTSP.get_trivial_lower_bound(data)} end)

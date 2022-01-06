@@ -129,7 +129,7 @@ defmodule JSTSP.Utils do
   end
 
   def lower_bound_constraint(lower_bound) when is_integer(lower_bound) do
-    "constraint cost <= #{lower_bound};"
+    "constraint cost >= #{lower_bound};"
   end
 
   def schedule_constraint(schedule) do
