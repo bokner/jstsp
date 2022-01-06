@@ -32,7 +32,7 @@ defmodule JSTSP.Utils do
     Path.join(:code.priv_dir(:jstsp), "mzn")
   end
 
-  def instance_data(file) do
+  def get_instance_data(file) do
     Path.extname(file) == ".dzn" && file || parse_instance_file(file)
   end
 
@@ -126,6 +126,10 @@ defmodule JSTSP.Utils do
 
   def upper_bound_constraint(upper_bound) when is_integer(upper_bound) do
     "constraint cost <= #{upper_bound};"
+  end
+
+  def lower_bound_constraint(lower_bound) when is_integer(lower_bound) do
+    "constraint cost <= #{lower_bound};"
   end
 
   def schedule_constraint(schedule) do

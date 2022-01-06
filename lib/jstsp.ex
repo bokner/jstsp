@@ -9,7 +9,7 @@ defmodule JSTSP do
 
   def run(instance_file, opts) when is_binary(instance_file) do
     instance_file
-    |> instance_data()
+    |> get_instance_data()
     |> run_model(opts)
     |> Map.put(:instance, instance_file)
   end
@@ -42,20 +42,37 @@ defmodule JSTSP do
   end
 
   defp get_model(opts) do
-    opts = build_solver_opts(opts)
-    base_model = case Keyword.get(opts, :warm_start) do
+    opts
+    |> build_solver_opts()
+    |> add_warm_start()
+    |> add_constraint(:upper_bound, opts)
+    |> add_constraint(:lower_bound, opts)
+    |> adjust_model_paths()
+  end
+
+
+  defp add_warm_start(opts) do
+    case Keyword.get(opts, :warm_start) do
       nil -> opts[:model]
       warm_start_map ->
         [warm_start_model(warm_start_map) | core_model()]
     end
-
-    case Keyword.get(opts, :upper_bound) do
-      nil -> base_model
-      upper_bound -> [{:model_text, upper_bound_constraint(upper_bound)} | base_model]
-    end
-    |> adjust_model_paths()
   end
 
+  defp add_constraint(model, :upper_bound, opts) do
+    case Keyword.get(opts, :upper_bound) do
+      nil -> model
+      upper_bound -> [{:model_text, upper_bound_constraint(upper_bound)} | model]
+    end
+  end
+
+  defp add_constraint(model, :lower_bound, opts) do
+    case Keyword.get(opts, :lower_bound) do
+      nil -> model
+      lower_bound ->
+        [{:model_text, lower_bound_constraint(lower_bound)} | model]
+    end
+  end
 
   defp adjust_model_paths(model_list) when is_list(model_list) do
     Enum.map(model_list,
@@ -69,12 +86,6 @@ defmodule JSTSP do
   end
 
   defp warm_start_model(warm_start_map) do
-    # warm_start_pars =
-    # warm_start_map
-    # |> Enum.map(fn {var, val} -> {"#{var}_warmup", val} end)
-    # |> Map.new()
-    # |> MinizincData.to_dzn()
-
     warm_start_annotations =
       warm_start_map
       |> Enum.map(fn {var, val} -> "warm_start( #{var}, #{MinizincData.elixir_to_dzn(val)})" end)
@@ -93,7 +104,7 @@ defmodule JSTSP do
 
   def job_cover(instance, opts) when is_binary(instance) do
     instance
-    |> instance_data()
+    |> get_instance_data()
     |> job_cover(opts)
   end
 
@@ -153,6 +164,7 @@ defmodule JSTSP do
   def registered_model_opts() do
     [
       upper_bound: &upper_bound_constraint/1,
+      lower_bound: &lower_bound_constraint/1,
       schedule_constraint: &schedule_constraint/1,
       warm_start: &schedule_warm_start/1
     ]
