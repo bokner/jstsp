@@ -132,6 +132,10 @@ defmodule JSTSP.Utils do
     "constraint cost >= #{lower_bound};"
   end
 
+  def lower_bound_constraint(_lower_bound) do
+    ""
+  end
+
   def schedule_constraint(schedule) do
     "constraint schedule = #{inspect(schedule)};"
   end
@@ -172,6 +176,10 @@ defmodule JSTSP.Utils do
 
   def mzn_dir_flag() do
     "-I #{mzn_dir()}"
+  end
+
+  def inline_model(model_text) do
+    {:model_text, model_text}
   end
 
   defp to_toolset(tools) do

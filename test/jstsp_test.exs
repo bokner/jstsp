@@ -32,8 +32,6 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, job_tools)
 
-    model = Path.join([mzn_dir(), "jstsp.mzn"])
-
     model_results =
       JSTSP.run_model(data,
         solver: "cplex",

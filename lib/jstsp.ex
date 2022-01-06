@@ -22,7 +22,10 @@ defmodule JSTSP do
   def run_model(instance_data, opts) do
     solver_opts = build_solver_opts(opts)
 
-    {:ok, res} = MinizincSolver.solve_sync(get_model(solver_opts), instance_data, solver_opts)
+    {:ok, res} =
+      solver_opts
+      |> build_model(instance_data)
+      |> MinizincSolver.solve_sync(instance_data, solver_opts)
 
     res
     |> MinizincResults.get_last_solution()
@@ -41,12 +44,12 @@ defmodule JSTSP do
       || res end)
   end
 
-  defp get_model(opts) do
+  defp build_model(opts, instance_data) do
     opts
     |> build_solver_opts()
     |> add_warm_start()
-    |> add_constraint(:upper_bound, opts)
-    |> add_constraint(:lower_bound, opts)
+    |> add_constraints(:upper_bound, instance_data, opts)
+    |> add_constraints(:lower_bound, instance_data, opts)
     |> adjust_model_paths()
   end
 
@@ -59,19 +62,16 @@ defmodule JSTSP do
     end
   end
 
-  defp add_constraint(model, :upper_bound, opts) do
+  defp add_constraints(model, :upper_bound, _instance_data, opts) do
     case Keyword.get(opts, :upper_bound) do
       nil -> model
-      upper_bound -> [{:model_text, upper_bound_constraint(upper_bound)} | model]
+      upper_bound -> [inline_model(upper_bound_constraint(upper_bound)) | model]
     end
   end
 
-  defp add_constraint(model, :lower_bound, opts) do
-    case Keyword.get(opts, :lower_bound) do
-      nil -> model
-      lower_bound ->
-        [{:model_text, lower_bound_constraint(lower_bound)} | model]
-    end
+  defp add_constraints(model, :lower_bound, _instance_data, opts) do
+    lower_bound = Keyword.get(opts, :lower_bound)
+    [inline_model(lower_bound_constraint(lower_bound)) | model]
   end
 
   defp adjust_model_paths(model_list) when is_list(model_list) do
@@ -91,13 +91,13 @@ defmodule JSTSP do
       |> Enum.map(fn {var, val} -> "warm_start( #{var}, #{MinizincData.elixir_to_dzn(val)})" end)
       |> Enum.join(",\n")
 
-    {:model_text,
+    inline_model(
       """
       solve
         ::
       #{warm_start_annotations}
       minimize cost;
-      """}
+      """)
   end
 
   def job_cover(instance, opts \\ [])

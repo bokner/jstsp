@@ -17,18 +17,22 @@ defmodule JSTSP.Results do
         Keyword.get(opts, :methods, [:upper_bound])
         |> Enum.reduce(opts, fn update_option, acc ->
 
-        Keyword.put(acc, update_option, update_option_arg(update_option, rec)) end)
+        Keyword.put(acc, update_option, update_option_arg(update_option, rec, opts)) end)
       JSTSP.run(rec.instance, opts)
     end)
     |> merge_results(prev_results)
   end
 
-  defp update_option_arg(:upper_bound, data) do
+  defp update_option_arg(:upper_bound, data, _opts) do
     data.objective
   end
 
-  defp update_option_arg(:warm_start, data) do
+  defp update_option_arg(:warm_start, data, _opts) do
     %{schedule: data.schedule}
+  end
+
+  defp update_option_arg(:lower_bound, data, _opts) do
+    data[:T] - data[:C]
   end
 
   def parse_results(csv_results) do
