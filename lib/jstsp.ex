@@ -116,7 +116,10 @@ defmodule JSTSP do
   end
 
   def job_cover(instance_data, opts) when is_map(instance_data) do
-    solver_opts = build_solver_opts(opts)
+    solver_opts =
+      opts
+      |> build_solver_opts()
+
     model =
       solver_opts
       |> Keyword.get(:set_cover_model)
