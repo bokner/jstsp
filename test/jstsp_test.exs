@@ -146,7 +146,7 @@ defmodule JstspTest do
     lb = JSTSP.get_lower_bound(data, solver_opts)
 
     ## Lower bound based on set-cover method
-    assert lb == 50
+    assert lb.lower_bound == 50
     ## Trivial lower bound
     assert JSTSP.get_trivial_lower_bound(data) == 40
 
@@ -278,7 +278,7 @@ defmodule JstspTest do
     model_results =
       JSTSP.run_model(data,
         model: ["jstsp.mzn", solution_constraint],
-        extra_flags: [mzn_dir_flag(), ignore_symmetry_flag(true)],
+        symmetry_breaking: false,
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 1200_000

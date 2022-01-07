@@ -75,7 +75,6 @@ defmodule JSTSP do
       lower_bound when is_integer(lower_bound) ->
         lower_bound_constraint(lower_bound)
       lower_bound_fun when is_function(lower_bound_fun) ->
-        Logger.debug("JOB TOOLS (add_constraints): #{inspect instance_data.job_tools}")
         lower_bound_fun.(instance_data, opts)
       _lower_bound -> nil
     end
@@ -142,7 +141,6 @@ defmodule JSTSP do
 
   def get_lower_bound(instance_data, opts) when is_map(instance_data) do
     solver_opts = build_solver_opts(opts)
-    Logger.debug("JOB TOOLS (get_lower_bound): #{inspect instance_data.job_tools}")
     instance_data
       |> job_cover(solver_opts)
       |> run_on_cover(solver_opts)
@@ -150,14 +148,18 @@ defmodule JSTSP do
         lower_bound =
         Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0
         %{lower_bound: lower_bound,
-          partial_schedule: get_partial_schedule(Map.get(res, :schedule), instance_data)
+          partial_schedule: get_partial_schedule(res, instance_data),
+          total_jobs: instance_data[:J]
         }
       end)
   end
 
-  defp get_partial_schedule(set_cover_schedule, res) do
-    Logger.debug("In partial schedule: #{inspect res}")
-    set_cover_schedule
+  defp get_partial_schedule(res, instance_data) do
+    Enum.map(res.schedule, fn job_num ->
+      Enum.find_index(instance_data.job_tools, fn job ->
+        job == Enum.at(res.job_tools, job_num - 1)
+      end) + 1
+    end)
   end
   def get_trivial_lower_bound(_instance_data = %{T: tool_num, C: magazine_capacity}) do
     tool_num - magazine_capacity

@@ -8,14 +8,36 @@ defmodule JSTSP.Utils do
       time_limit: 300_000,
       model: standard_model(),
       set_cover_model: "setcover.mzn",
-      extra_flags: [mzn_dir_flag(), ignore_symmetry_flag(false)]
+      mzn_dir: mzn_dir(),
+      symmetry_breaking: true
     ]
   end
 
   ## Build solver opts from model opts
   def build_solver_opts(model_opts) do
     Keyword.merge(default_solver_opts(), model_opts)
+    |> build_extra_flags()
   end
+
+  defp build_extra_flags(opts) do
+    Enum.map([:mzn_dir, :symmetry_breaking, :extra_flags],
+      fn flag -> build_flag(flag, Keyword.get(opts, flag, "")) end)
+    |> Enum.join(" ")
+    |> then(fn flags -> Keyword.put(opts, :extra_flags, flags) end)
+  end
+
+  defp build_flag(:mzn_dir, dir) do
+    mzn_dir_flag(dir)
+  end
+
+  defp build_flag(:symmetry_breaking, bool) do
+    ignore_symmetry_flag(!bool)
+  end
+
+  defp build_flag(:extra_flags, extra_flags) do
+    extra_flags
+  end
+
   def standard_model() do
     ["solve_definition.mzn" | core_model()]
   end
@@ -132,8 +154,13 @@ defmodule JSTSP.Utils do
     "constraint cost >= #{lower_bound};"
   end
 
-  def lower_bound_constraint(lower_bound_map) when is_map(lower_bound_map) do
-    lower_bound_constraint(lower_bound_map.lower_bound)
+  def lower_bound_constraint(lower_bound_map = %{partial_schedule: partial_schedule, total_jobs: total_jobs}) do
+    schedule_str =
+      Enum.join(
+        lower_bound_map.partial_schedule ++
+        List.duplicate("_", total_jobs - length(partial_schedule)), ", ")
+    lower_bound_constraint(lower_bound_map.lower_bound) <> "\n" <>
+    "schedule = [#{schedule_str}];\n"
   end
 
   def lower_bound_constraint(_lower_bound) do
@@ -174,12 +201,12 @@ defmodule JSTSP.Utils do
     end)
   end
 
-  def ignore_symmetry_flag(bool) do
+  def ignore_symmetry_flag(bool \\ false) do
     "-D mzn_ignore_symmetry_breaking_constraints=#{bool}"
   end
 
-  def mzn_dir_flag() do
-    "-I #{mzn_dir()}"
+  def mzn_dir_flag(dir \\ mzn_dir()) do
+    "-I #{dir}"
   end
 
   def inline_model(model_text) do
