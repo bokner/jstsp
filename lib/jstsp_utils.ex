@@ -7,10 +7,19 @@ defmodule JSTSP.Utils do
       solution_handler: JSTSP.MinizincHandler,
       time_limit: 300_000,
       model: standard_model(),
-      set_cover_model: "setcover.mzn",
       mzn_dir: mzn_dir(),
       symmetry_breaking: true
     ]
+  end
+
+  def default_set_cover_opts do
+    [
+      solver: "cplex",
+      solution_handler: JSTSP.MinizincHandler,
+      time_limit: 300_000,
+      mzn_dir: mzn_dir(),
+      model: "setcover.mzn"
+    ] |> build_extra_flags()
   end
 
   ## Build solver opts from model opts
@@ -21,13 +30,13 @@ defmodule JSTSP.Utils do
 
   defp build_extra_flags(opts) do
     Enum.map([:mzn_dir, :symmetry_breaking, :extra_flags],
-      fn flag -> build_flag(flag, Keyword.get(opts, flag, "")) end)
+      fn flag -> build_flag(flag, Keyword.get(opts, flag, false)) end)
     |> Enum.join(" ")
     |> then(fn flags -> Keyword.put(opts, :extra_flags, flags) end)
   end
 
   defp build_flag(:mzn_dir, dir) do
-    mzn_dir_flag(dir)
+    dir && mzn_dir_flag(dir) || mzn_dir()
   end
 
   defp build_flag(:symmetry_breaking, bool) do
@@ -35,7 +44,7 @@ defmodule JSTSP.Utils do
   end
 
   defp build_flag(:extra_flags, extra_flags) do
-    extra_flags
+    extra_flags || ""
   end
 
   def standard_model() do
