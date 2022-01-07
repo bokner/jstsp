@@ -116,14 +116,9 @@ defmodule JSTSP do
   end
 
   def job_cover(instance_data, opts) when is_map(instance_data) do
-    solver_opts =
-      opts
-      |> build_solver_opts()
-
-    model =
-      solver_opts
-      |> Keyword.get(:set_cover_model)
-      |> adjust_model_paths()
+    solver_opts = Keyword.merge(opts, default_set_cover_opts())
+    model = solver_opts[:model]
+    |> adjust_model_paths()
     {:ok, res} = MinizincSolver.solve_sync(model, instance_data, solver_opts)
 
     res

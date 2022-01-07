@@ -114,7 +114,7 @@ defmodule JstspTest do
 
   test "set cover" do
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    cover_results = JSTSP.job_cover(instance, solver: "cplex")
+    cover_results = JSTSP.job_cover(instance)
     cover = cover_results.cover
     jobs = cover_results.job_tools
     cover_jobs = Enum.flat_map(0..length(cover) - 1,
@@ -143,7 +143,7 @@ defmodule JstspTest do
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
-    lb = JSTSP.get_lower_bound(data, solver_opts)
+    lb = JSTSP.get_lower_bound(data)
 
     ## Lower bound based on set-cover method
     assert lb.lower_bound == 50
