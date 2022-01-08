@@ -35,7 +35,7 @@ defmodule JSTSP.Results do
   end
 
   defp update_option_arg(:lower_bound, data, _rec, _opts) do
-    get_lower_bound(data)
+    get_lower_bound(data).lower_bound
   end
 
   def parse_results(csv_results) do
@@ -60,11 +60,20 @@ defmodule JSTSP.Results do
   def merge_results(new_results, prev_results) do
     new_results_by_instance = Enum.group_by(new_results, & &1.instance)
     Enum.map(prev_results,
-      fn rec -> rec.status in [:optimal, "optimal"] &&
-        rec || ([new_rec] = Map.get(new_results_by_instance, rec.instance);
-        (new_rec.status in [:optimal, "optimal"] || new_rec.objective < rec.objective)
-        && new_rec || rec)
+      fn rec -> optimal?(rec.status) &&
+        rec || (
+          [new_rec] = Map.get(new_results_by_instance, rec.instance)
+          (optimal?(new_rec.status) || new_rec.objective < rec.objective)
+        &&
+         tap(new_rec, fn better ->
+           Logger.warn("Better solution found: #{inspect better}")
+         end)
+        || rec)
       end)
+  end
+
+  defp optimal?(status) do
+    to_string(status) == "optimal"
   end
 
   def get_lower_bounds(csv_results) do

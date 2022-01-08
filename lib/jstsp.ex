@@ -147,6 +147,11 @@ defmodule JSTSP do
           partial_schedule: get_partial_schedule(res, instance_data),
           total_jobs: instance_data[:J]
         }
+        |> tap(fn lb ->
+          trivial_lb = get_trivial_lower_bound(instance_data)
+          lb.lower_bound > trivial_lb &&
+          Logger.warn("Better than trivial lower bound (#{trivial_lb}) found: #{inspect lb.lower_bound}")
+         end)
       end)
   end
 

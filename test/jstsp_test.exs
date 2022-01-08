@@ -134,12 +134,12 @@ defmodule JstspTest do
 
   end
 
-  @tag timeout: 150_000
+  @tag timeout: 180_000
   test "lower bound on set cover" do
     solver_opts =
     [solver: "cplex",
     solution_handler: JSTSP.MinizincHandler,
-    time_limit: 120_000]
+    time_limit: 150_000]
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
