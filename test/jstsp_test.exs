@@ -143,7 +143,7 @@ defmodule JstspTest do
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
-    lb = JSTSP.get_lower_bound(data)
+    lb = JSTSP.get_lower_bound(data, solver_opts)
 
     ## Lower bound based on set-cover method
     assert lb.lower_bound == 50
