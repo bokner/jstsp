@@ -72,11 +72,9 @@ defmodule JSTSP do
 
   defp add_constraints(model, :lower_bound, instance_data, opts) do
     lb_constraint = case Keyword.get(opts, :lower_bound) do
-      lower_bound when is_integer(lower_bound) ->
-        lower_bound_constraint(lower_bound)
       lower_bound_fun when is_function(lower_bound_fun) ->
         lower_bound_fun.(instance_data, opts)
-      _lower_bound -> nil
+      lower_bound -> lower_bound_constraint(lower_bound)
     end
     [inline_model(lb_constraint) | model]
   end

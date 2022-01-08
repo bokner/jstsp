@@ -14,30 +14,28 @@ defmodule JSTSP.Results do
     |> Enum.with_index(1)
     |> Enum.map(fn {rec, idx} ->
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
+      instance_data = get_instance_data(rec.instance)
       opts =
         Keyword.get(opts, :methods, [:upper_bound])
         |> Enum.reduce(opts, fn update_option, acc ->
 
-        Keyword.put(acc, update_option, update_option_arg(update_option, rec, opts)) end)
-      JSTSP.run(rec.instance, opts)
+        Keyword.put(acc, update_option, update_option_arg(update_option, instance_data, rec, opts)) end)
+      JSTSP.run_model(instance_data, opts)
+      |> Map.put(:instance, rec.instance)
     end)
     |> merge_results(prev_results)
   end
 
-  defp update_option_arg(:upper_bound, data, _opts) do
-    data.objective
+  defp update_option_arg(:upper_bound, _data, rec, _opts) do
+    rec.objective
   end
 
-  defp update_option_arg(:warm_start, data, _opts) do
-    %{schedule: data.schedule}
+  defp update_option_arg(:warm_start, _data, rec, _opts) do
+    %{schedule: rec.schedule}
   end
 
-  defp update_option_arg(:lower_bound, _data, _opts) do
-    # This is a lazy call; the arguments will be passed
-    # to the func by JSTSP.run_model/2
-    fn(data, _opts) ->
-      lower_bound_constraint(
-      get_lower_bound(data)) end
+  defp update_option_arg(:lower_bound, data, _rec, _opts) do
+    get_lower_bound(data)
   end
 
   def parse_results(csv_results) do
