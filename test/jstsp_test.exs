@@ -10,7 +10,7 @@ defmodule JstspTest do
 
     data_instance = Path.join([mzn_dir(), "da_silva1.dzn"])
 
-    model_results =
+    {:ok, model_results} =
       JSTSP.run_model(data_instance,
         model: standard_model(),
         solver: "gecode",
@@ -32,7 +32,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, job_tools)
 
-    model_results =
+    {:ok, model_results} =
       JSTSP.run_model(data,
         solver: "cplex",
         model: [solution_constraint | standard_model()],
@@ -101,7 +101,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T])
       |> Map.put(:J, length(reduced_job_list))
       |> Map.put(:job_tools, reduced_job_list)
-    model_results = JSTSP.run_model(data,
+    {:ok, model_results} = JSTSP.run_model(data,
         solver: "yuck",
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 120_000,
@@ -136,7 +136,7 @@ defmodule JstspTest do
 
   @tag timeout: 180_000
   test "lower bound on set cover" do
- 
+
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
     lb = JSTSP.get_lower_bound(data)
@@ -271,7 +271,7 @@ defmodule JstspTest do
 
   defp assert_schedule(schedule, data, objective) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
-    model_results =
+    {:ok, model_results} =
       JSTSP.run_model(data,
         model: ["jstsp.mzn", solution_constraint],
         symmetry_breaking: false,

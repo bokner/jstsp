@@ -20,7 +20,12 @@ defmodule JSTSP.Results do
         |> Enum.reduce(opts, fn update_option, acc ->
 
         Keyword.put(acc, update_option, update_option_arg(update_option, instance_data, rec, opts)) end)
-      JSTSP.run_model(instance_data, opts)
+
+      case JSTSP.run_model(instance_data, opts) do
+        {:ok, results} ->
+          results
+        {:error, error} -> %{error: error}
+      end
       |> Map.put(:instance, rec.instance)
     end)
     |> merge_results(prev_results)
@@ -60,19 +65,24 @@ defmodule JSTSP.Results do
     end)
   end
 
+
   def merge_results(new_results, prev_results) do
     new_results_by_instance = Enum.group_by(new_results, & &1.instance)
     Enum.map(prev_results,
-      fn rec -> optimal?(rec.status) &&
-        rec || (
+      fn rec -> optimal?(rec.status) && rec
+        || (
           [new_rec] = Map.get(new_results_by_instance, rec.instance)
-          (optimal?(new_rec.status) || new_rec.objective < rec.objective)
+          success?(new_rec) && (optimal?(new_rec.status) || new_rec.objective < rec.objective)
         &&
          tap(new_rec, fn better ->
            Logger.warn("Better solution found: #{inspect better}")
          end)
         || rec)
       end)
+  end
+
+  defp success?(result) do
+    !Map.has_key?(result, :error)
   end
 
   defp optimal?(status) do

@@ -22,26 +22,32 @@ defmodule JSTSP do
   def run_model(instance_data, opts) do
     solver_opts = build_solver_opts(opts)
 
-    {:ok, res} =
+    solver_result =
       solver_opts
       |> build_model(instance_data)
       |> MinizincSolver.solve_sync(instance_data, solver_opts)
 
-    res
-    |> MinizincResults.get_last_solution()
-    |> then(fn solution ->
-      %{
-        solver: res.summary.solver,
-        time_limit: solver_opts[:time_limit],
-        objective: MinizincResults.get_solution_objective(solution),
-        status: MinizincResults.get_status(res.summary),
-        schedule: MinizincResults.get_solution_value(solution, "schedule"),
-        magazine: MinizincResults.get_solution_value(solution, "magazine")
-      }
-    end)
-    |> then(fn res ->
-      is_map(instance_data) && Map.merge(res, instance_data)
-      || res end)
+    case solver_result do
+      {:ok, res} ->
+        res
+          |> MinizincResults.get_last_solution()
+          |> then(fn solution ->
+            %{
+              solver: res.summary.solver,
+              time_limit: solver_opts[:time_limit],
+              objective: MinizincResults.get_solution_objective(solution),
+              status: MinizincResults.get_status(res.summary),
+              schedule: MinizincResults.get_solution_value(solution, "schedule"),
+              magazine: MinizincResults.get_solution_value(solution, "magazine")
+            }
+          end)
+          |> then(fn res ->
+            {:ok,
+            is_map(instance_data) && Map.merge(res, instance_data)
+            || res} end)
+       {:error, error} ->
+          {:error, error}
+      end
   end
 
   defp build_model(opts, instance_data) do
@@ -140,7 +146,7 @@ defmodule JSTSP do
     instance_data
       |> job_cover(solver_opts)
       |> run_on_cover(solver_opts)
-      |> then(fn res ->
+      |> then(fn {:ok, res} ->
         lower_bound =
         Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0
         %{lower_bound: lower_bound,
@@ -152,7 +158,9 @@ defmodule JSTSP do
           lb.lower_bound > trivial_lb &&
           Logger.warn("Better than trivial lower bound (#{trivial_lb}) found: #{inspect lb.lower_bound}")
          end)
-      end)
+      {:error, error} -> error
+        end
+      )
   end
 
   defp get_partial_schedule(res, instance_data) do
