@@ -30,8 +30,11 @@ defmodule JSTSP.Results do
     rec.objective
   end
 
-  defp update_option_arg(:warm_start, _data, rec, _opts) do
-    %{schedule: rec.schedule}
+  defp update_option_arg(:warm_start, _data, _rec = %{schedule: schedule_str}, _opts) do
+    {schedule, _} = Code.eval_string(schedule_str)
+    schedule = List.first(schedule) < List.last(schedule) && schedule
+    || Enum.reverse(schedule)
+    %{schedule: schedule}
   end
 
   defp update_option_arg(:lower_bound, data, _rec, _opts) do
