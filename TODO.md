@@ -1,3 +1,4 @@
+0. Switch to generated constraints for symmetries (the ignore_... flag isn't reliable) 
 1. Test for reversing job list (model -> results -> feed schedule -> model)
 2. Statement (Senne, Yanasse): given the job sequence, the lower bound for switches can be found with KTNS (Keep Tool Needed Soonest) algorithm (Tang, Denardo)
 3. Add times to stats for finding optimal value and optimality proof
