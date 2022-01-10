@@ -3,6 +3,7 @@ defmodule Jstsp.MixProject do
 
   def project do
     [
+      mod: mod: {JSTSP.Application, []},
       app: :jstsp,
       version: "0.1.0",
       elixir: "~> 1.12",
@@ -23,7 +24,8 @@ defmodule Jstsp.MixProject do
     [
       {:solverl, git: "https://github.com/bokner/solverl.git"},
       #{:solverl, path: "/Users/bokner/projects/solverl"},
-      {:csv, "~> 2.4"}
+      {:csv, "~> 2.4"},
+      {:cubdb, "~> 1.1"}
     ]
   end
 end
