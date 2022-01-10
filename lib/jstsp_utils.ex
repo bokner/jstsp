@@ -181,6 +181,10 @@ defmodule JSTSP.Utils do
     "constraint schedule = #{inspect(schedule)};"
   end
 
+  def normalize_schedule(schedule) do
+    List.first(schedule) < List.last(schedule) && schedule
+    || Enum.reverse(schedule)
+  end
   def schedule_warm_start(schedule) do
     """
     annotation warm_start(schedule,
@@ -282,6 +286,17 @@ defmodule JSTSP.Utils do
       fn {_d, by} -> by end, fn {d, _by} -> d end)
       schedule
       |> merge_dominated_impl(dominance_map)
+  end
+
+  @doc """
+  Purpose: build the warmup schedule by putting the partial schedule
+  (obtained for example, with set-cover method) in front
+  """
+  def warmup_schedule(schedule, partial_schedule) do
+    normalize_schedule(
+    partial_schedule ++
+      Enum.reduce(partial_schedule, schedule, fn el, acc -> List.delete(acc, el) end)
+    )
   end
 
   defp merge_dominated_impl(schedule, dominance_map) when map_size(dominance_map) == 0 do
