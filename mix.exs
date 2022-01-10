@@ -3,7 +3,6 @@ defmodule Jstsp.MixProject do
 
   def project do
     [
-      mod: mod: {JSTSP.Application, []},
       app: :jstsp,
       version: "0.1.0",
       elixir: "~> 1.12",
@@ -15,7 +14,8 @@ defmodule Jstsp.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      mod: {JSTSP.Application, []},
+      extra_applications: [:logger, :cubdb]
     ]
   end
 
