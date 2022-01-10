@@ -40,7 +40,8 @@ defmodule JSTSP.Utils do
   end
 
   defp build_flag(:symmetry_breaking, bool) do
-    ignore_symmetry_flag(!bool)
+    #ignore_symmetry_flag(!bool)
+    nil
   end
 
   defp build_flag(:extra_flags, extra_flags) do
