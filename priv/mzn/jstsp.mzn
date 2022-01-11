@@ -13,6 +13,8 @@ include "jstsp_constraints.mzn";
 
 include "predicates_functions.mzn";
 
+include "symmetry_breaking.mzn";
+
 include "solve_definition.mzn";
 
 
