@@ -5,9 +5,11 @@ defmodule JSTSP.Results do
 
   def update_results(results_csv, opts) do
     prev_results = parse_results(results_csv)
+    filter_fun = Keyword.get(opts, :filter, fn x -> x end)
 
     prev_results
     |> Enum.reject(fn rec -> rec.status == "optimal" end)
+    |> filter_fun.()
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
     end)
