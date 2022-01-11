@@ -56,6 +56,7 @@ defmodule JSTSP do
     |> add_warm_start()
     |> add_constraints(:upper_bound, instance_data, opts)
     |> add_constraints(:lower_bound, instance_data, opts)
+    |> add_constraints(:symmetry_breaking, instance_data, opts)
     |> adjust_model_paths()
   end
 
@@ -83,6 +84,11 @@ defmodule JSTSP do
       lower_bound -> lower_bound_constraint(lower_bound)
     end
     [inline_model(lb_constraint) | model]
+  end
+
+  defp add_constraints(model, :symmetry_breaking, _instance_data, opts) do
+    Keyword.get(opts, :symmetry_breaking, true) && ["symmetry_breaking.mzn" | model]
+    || model
   end
 
   defp adjust_model_paths(model_list) when is_list(model_list) do

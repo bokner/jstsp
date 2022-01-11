@@ -39,7 +39,7 @@ defmodule JSTSP.Utils do
     dir && mzn_dir_flag(dir) || mzn_dir()
   end
 
-  defp build_flag(:symmetry_breaking, bool) do
+  defp build_flag(:symmetry_breaking, _bool) do
     #ignore_symmetry_flag(!bool)
     nil
   end

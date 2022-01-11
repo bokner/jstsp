@@ -273,7 +273,7 @@ defmodule JstspTest do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
     {:ok, model_results} =
       JSTSP.run_model(data,
-        model: ["jstsp.mzn", solution_constraint],
+        model: [solution_constraint | standard_model()],
         symmetry_breaking: false,
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
