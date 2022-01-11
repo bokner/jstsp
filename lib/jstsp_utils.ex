@@ -131,6 +131,15 @@ defmodule JSTSP.Utils do
       |> then(fn content -> File.write(filename, content) end)
   end
 
+  def csv_to_cubdb(csv_file) do
+    csv_file
+    |> JSTSP.Results.parse_results()
+    |> Enum.each(fn rec -> to_cubdb(rec) end)
+  end
+
+  def to_cubdb(instance_rec) do
+    CubDB.put(:cubdb, {:instance, instance_rec.instance}, instance_rec)
+  end
   def result_to_csv(
         instance,
         _result = %{
