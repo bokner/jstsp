@@ -54,13 +54,13 @@ defmodule JSTSP.Results do
       %{
         instance: rec["instance"],
         objective: String.to_integer(rec["objective"]),
-        status: rec["status"],
+        status: String.to_atom(rec["status"]),
         schedule: rec["schedule"],
         T: String.to_integer(rec["T"]),
         J: String.to_integer(rec["J"]),
         C: String.to_integer(rec["C"]),
         solver: rec["solver"],
-        time_limit: rec["time_limit(msec)"]
+        time_limit: String.to_integer(rec["time_limit(msec)"])
       }
     end)
   end
