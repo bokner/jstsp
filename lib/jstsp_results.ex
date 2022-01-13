@@ -8,7 +8,7 @@ defmodule JSTSP.Results do
     filter_fun = Keyword.get(opts, :filter, fn x -> x end)
 
     prev_results
-    |> Enum.reject(fn rec -> rec.status == "optimal" end)
+    |> Enum.reject(fn rec -> rec.status == :optimal end)
     |> filter_fun.()
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
@@ -25,12 +25,10 @@ defmodule JSTSP.Results do
 
       case JSTSP.run_model(instance_data, opts) do
         {:ok, results} ->
-          results
+          merge_results(results, rec)
         {:error, error} -> %{error: error}
       end
-      |> Map.put(:instance, rec.instance)
     end)
-    |> merge_results(prev_results)
   end
 
   defp update_option_arg(:upper_bound, _data, rec, _opts) do
@@ -66,19 +64,15 @@ defmodule JSTSP.Results do
   end
 
 
-  def merge_results(new_results, prev_results) do
-    new_results_by_instance = Enum.group_by(new_results, & &1.instance)
-    Enum.map(prev_results,
-      fn rec -> optimal?(rec.status) && rec
+  def merge_results(new_result, prev_result) do
+      optimal?(prev_result.status) && prev_result
         || (
-          [new_rec] = Map.get(new_results_by_instance, rec.instance)
-          success?(new_rec) && (optimal?(new_rec.status) || new_rec.objective < rec.objective)
+          success?(new_result) && (optimal?(new_result.status) || new_result.objective < prev_result.objective)
         &&
-         tap(new_rec, fn better ->
+         tap(new_result, fn better ->
            Logger.warn("Better solution found: #{inspect better}")
          end)
-        || rec)
-      end)
+        || prev_result)
   end
 
   defp success?(result) do

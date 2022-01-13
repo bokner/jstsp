@@ -22,10 +22,11 @@ defmodule JSTSP do
   def run_model(instance_data, opts) do
     solver_opts = build_solver_opts(opts)
 
+
     solver_result =
       solver_opts
       |> build_model(instance_data)
-      |> MinizincSolver.solve_sync(instance_data, solver_opts)
+      |> MinizincSolver.solve_sync(build_data(instance_data), solver_opts)
 
     case solver_result do
       {:ok, res} ->
@@ -58,6 +59,14 @@ defmodule JSTSP do
     |> add_constraints(:lower_bound, instance_data, opts)
     |> add_constraints(:symmetry_breaking, instance_data, opts)
     |> adjust_model_paths()
+  end
+
+  defp build_data(instance_data) when is_map(instance_data) do
+    Map.take(instance_data, [:C, :T, :J, :job_tools])
+  end
+
+  defp build_data(instance_data) do
+    instance_data
   end
 
 
@@ -129,7 +138,7 @@ defmodule JSTSP do
     solver_opts = Keyword.merge(opts, default_set_cover_opts())
     model = solver_opts[:model]
     |> adjust_model_paths()
-    {:ok, res} = MinizincSolver.solve_sync(model, instance_data, solver_opts)
+    {:ok, res} = MinizincSolver.solve_sync(model, build_data(instance_data), solver_opts)
 
     res
     |> MinizincResults.get_last_solution()

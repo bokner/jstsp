@@ -65,7 +65,11 @@ defmodule JSTSP.Utils do
   end
 
   def get_instance_data(file) do
-    Path.extname(file) == ".dzn" && file || parse_instance_file(file)
+    Path.extname(file) == ".dzn" && file ||
+    file
+    |> parse_instance_file()
+    |> Map.put(:instance, file)
+
   end
 
   defp parse_instance_file(instance_file) do
