@@ -67,7 +67,7 @@ defmodule JSTSP.Results do
   def merge_results(new_result, prev_result) do
       optimal?(prev_result.status) && prev_result
         || (
-          success?(new_result) && (optimal?(new_result.status) || new_result.objective < prev_result.objective)
+          success?(new_result) && (optimal?(new_result) || new_result.objective < prev_result.objective)
         &&
          tap(new_result, fn better ->
            Logger.warn("Better solution found: #{inspect better}")
@@ -79,8 +79,8 @@ defmodule JSTSP.Results do
     !Map.has_key?(result, :error)
   end
 
-  defp optimal?(status) do
-    to_string(status) == "optimal"
+  defp optimal?(result) do
+    result.status == :optimal
   end
 
   def get_lower_bounds(csv_results) do
@@ -96,6 +96,49 @@ defmodule JSTSP.Results do
       {rec.instance,
       JSTSP.get_lower_bound(data),
       JSTSP.get_trivial_lower_bound(data)} end)
+  end
+
+  def stats(filter_fun \\ fn x -> x end) do
+    {:ok, recs} = CubDB.select(:cubdb)
+    recs
+    |> filter_fun.()
+    |> tap(fn instances -> Logger.debug("Instances: #{inspect length(instances)}") end)
+    |> Enum.map(fn {_key, rec} -> rec end)
+    |> Enum.group_by(fn rec -> %{J: rec[:J], T: rec[:T]} end)
+    |> Enum.map(fn {key, recs} -> %{sizes: key, total: length(recs), records: recs,
+      gaps:
+      recs
+      |> Enum.map(&optimality_gap/1)
+      |> Enum.reduce(%{}, fn x, acc -> Map.update(acc, x, 1, &(&1 + 1)) end)
+      |> then(fn gaps ->
+        List.foldr([0, 1, 2], [], fn g, acc ->
+            [Map.get(gaps, g, 0) | acc]
+        end)
+      end)
+      } end)
+
+    |> Enum.sort_by(fn rec ->
+      sizes = rec.sizes
+      {sizes[:J], sizes[:T], sizes[:C]}
+   end)
+  end
+
+  def stats_to_latex(stats) do
+    stats
+    |> Enum.map(fn rec ->
+      bigger_gaps = rec.total - Enum.sum(rec.gaps)
+      sizes = rec.sizes
+      [sizes[:J], sizes[:T], rec.total] ++ rec.gaps ++ [bigger_gaps]
+      |> Enum.join(" & ")
+      |> then(fn latex_row -> latex_row <> " \\\\" end)
+    end)
+    |> Enum.join("\n\\hline\n")
+    |> then(fn latex -> File.write!("latex_results", latex) end)
+  end
+
+  def optimality_gap(instance_data) do
+    optimal?(instance_data) && 0
+    || instance_data.objective - get_trivial_lower_bound(instance_data)
   end
   def yanasse_beam_search_results() do
     obks = [
