@@ -24,11 +24,20 @@ defmodule JSTSP.Results do
         Keyword.put(acc, update_option, update_option_arg(update_option, instance_data, rec, opts)) end)
 
       case JSTSP.run_model(instance_data, opts) do
-        {:ok, results} ->
-          merge_results(results, rec)
-        {:error, error} -> %{error: error}
+        {:ok, new_result} ->
+          choose_best(new_result, rec)
+        {:error, error} ->
+          Logger.error("Error on #{inspect rec.instance} : #{inspect error}")
+          rec
       end
     end)
+    |> Enum.group_by(fn rec -> rec.instance end)
+    |> then(fn new_results_by_instance ->
+      Enum.map(prev_results,
+        fn rec -> new_result = Map.get(new_results_by_instance, rec.instance)
+         new_result && hd(new_result) || rec end)
+    end
+    )
   end
 
   defp update_option_arg(:upper_bound, _data, rec, _opts) do
@@ -64,8 +73,8 @@ defmodule JSTSP.Results do
   end
 
 
-  def merge_results(new_result, prev_result) do
-      optimal?(prev_result.status) && prev_result
+  def choose_best(new_result, prev_result) do
+      optimal?(prev_result) && prev_result
         || (
           success?(new_result) && (optimal?(new_result) || new_result.objective < prev_result.objective)
         &&
@@ -104,6 +113,11 @@ defmodule JSTSP.Results do
     |> filter_fun.()
     |> tap(fn instances -> Logger.debug("Instances: #{inspect length(instances)}") end)
     |> Enum.map(fn {_key, rec} -> rec end)
+    |> stats_summary()
+  end
+
+  def stats_summary(results) do
+    results
     |> Enum.group_by(fn rec -> %{J: rec[:J], T: rec[:T]} end)
     |> Enum.map(fn {key, recs} -> %{sizes: key, total: length(recs), records: recs,
       gaps:
@@ -122,7 +136,6 @@ defmodule JSTSP.Results do
       {sizes[:J], sizes[:T], sizes[:C]}
    end)
   end
-
   def stats_to_latex(stats) do
     stats
     |> Enum.map(fn rec ->
@@ -138,7 +151,10 @@ defmodule JSTSP.Results do
 
   def optimality_gap(instance_data) do
     optimal?(instance_data) && 0
-    || instance_data.objective - get_trivial_lower_bound(instance_data)
+    || instance_data.objective -
+      #max(get_lower_bound(get_instance_data(instance_data.instance), time_limit: 60_000).lower_bound,
+      get_trivial_lower_bound(instance_data)
+      #)
   end
   def yanasse_beam_search_results() do
     obks = [
