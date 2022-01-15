@@ -174,6 +174,9 @@ defmodule JSTSP do
           Logger.warn("Better than trivial lower bound (#{trivial_lb}) found: #{inspect lb.lower_bound}")
          end)
       {:error, error} -> error
+        other ->
+          Logger.error("Unexpected result for lower bound: #{inspect other}")
+          0
         end
       )
   end

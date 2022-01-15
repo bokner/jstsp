@@ -95,6 +95,7 @@ defmodule JSTSP.Results do
   def get_lower_bounds(csv_results) do
     csv_results
     |> parse_results()
+    |> Enum.reject(fn rec -> optimal?(rec) end)
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
     end)
@@ -102,9 +103,9 @@ defmodule JSTSP.Results do
     |> Enum.map(fn {rec, idx} ->
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
       data = get_instance_data(rec.instance)
-      {rec.instance,
-      JSTSP.get_lower_bound(data),
-      JSTSP.get_trivial_lower_bound(data)} end)
+      %{instance: rec.instance,
+        lower_bound: max(JSTSP.get_lower_bound(data),
+      JSTSP.get_trivial_lower_bound(data))} end)
   end
 
   def stats(filter_fun \\ fn x -> x end) do
