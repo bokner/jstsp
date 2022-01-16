@@ -72,6 +72,19 @@ defmodule JSTSP.Results do
     end)
   end
 
+  def parse_lower_bounds(lb_csv) do
+    lb_csv
+    |> File.stream!()
+    |> CSV.decode(headers: true)
+    |> Enum.map(fn {:ok, rec} ->
+      %{
+        instance: rec["instance"],
+        lower_bound: String.to_integer(rec["lower_bound"]),
+        partial_schedule: rec["partial_schedule"]
+      }
+    end)
+  end
+
 
   def choose_best(new_result, prev_result) do
       optimal?(prev_result) && prev_result
@@ -118,12 +131,17 @@ defmodule JSTSP.Results do
   end
 
   def stats_summary(results) do
+    lower_bounds =
+      parse_lower_bounds("results/lower_bounds.csv")
+      |> Enum.reduce(%{}, fn lb, acc -> Map.put(acc, lb.instance, lb.lower_bound) end)
     results
     |> Enum.group_by(fn rec -> %{J: rec[:J], T: rec[:T]} end)
     |> Enum.map(fn {key, recs} -> %{sizes: key, total: length(recs), records: recs,
       gaps:
       recs
-      |> Enum.map(&optimality_gap/1)
+      |> Enum.map(fn rec ->
+        rec = Map.put(rec, :lower_bound, Map.get(lower_bounds, rec.instance))
+        optimality_gap(rec) end)
       |> Enum.reduce(%{}, fn x, acc -> Map.update(acc, x, 1, &(&1 + 1)) end)
       |> then(fn gaps ->
         List.foldr([0, 1, 2], [], fn g, acc ->
@@ -152,10 +170,14 @@ defmodule JSTSP.Results do
 
   def optimality_gap(instance_data) do
     optimal?(instance_data) && 0
-    || instance_data.objective -
-      #max(get_lower_bound(get_instance_data(instance_data.instance), time_limit: 60_000).lower_bound,
-      get_trivial_lower_bound(instance_data)
-      #)
+    ||
+    (
+      lb = Map.get(instance_data, :lower_bound) ||
+        get_lower_bound(get_instance_data(instance_data.instance), time_limit: 60_000).lower_bound
+      instance_data.objective -
+      max(lb, get_trivial_lower_bound(instance_data)
+      )
+    )
   end
   def yanasse_beam_search_results() do
     obks = [
