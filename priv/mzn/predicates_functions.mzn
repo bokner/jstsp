@@ -1,11 +1,6 @@
 function var TOOLS0: switches(var JOBS: current_job, var JOBS: next_job) =
          sum(t in TOOLS)
-         (bool2int(magazine[next_job, t] > magazine[current_job, t]));
-
-function var int: total_switches(array[int] of var JOBS: jobs) = 
-    sum(i in 1..length(jobs) - 1)(
-        switches(jobs[i], jobs[i+1])
-    );
+         (magazine[next_job, t] > magazine[current_job, t]);
 
 % How many switches is required for sequence (job1, job2)? 
 function var TOOLS0: tool_diff(var JOBS: job1, var JOBS: job2) = 

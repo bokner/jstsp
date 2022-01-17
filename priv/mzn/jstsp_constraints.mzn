@@ -10,15 +10,13 @@ constraint forall(i in JOBS)(
   sum(row(magazine, i)) = C
 );
 
+array[TOOLS] of var JOBS0: tool_switches;
 
-array[1..J-1] of var TOOLS0: magazine_switches;
-
-constraint forall(i in 1..J-1) (
-  magazine_switches[i] = switches(i, i+1) 
-  /\ magazine_switches[i] <= tool_diff(schedule[i], schedule[i + 1])
+constraint forall(t in TOOLS) (
+  tool_switches[t] = sum(i in 1..J-1)(magazine[i+1, t] > magazine[i, t])
 );
 
-constraint cost = sum(magazine_switches); 
+constraint cost = sum(tool_switches); 
 
 % Trivial lower bound
 constraint cost >= T - C;
