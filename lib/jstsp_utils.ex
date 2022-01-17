@@ -212,7 +212,8 @@ defmodule JSTSP.Utils do
         0..(length(schedule) - 1),
         fn i ->
           magazine
-          |> Enum.at(Enum.at(schedule, i) - 1)
+          |> Enum.at(i)
+          #|> Enum.at(Enum.at(schedule, i) - 1)
           |> to_toolset()
         end
       )

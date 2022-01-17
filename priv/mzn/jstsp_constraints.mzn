@@ -3,7 +3,7 @@ include "globals.mzn";
 constraint all_different(schedule);
 
 constraint forall(i in JOBS, j in TOOLS)(
-  magazine[i, j] >= job_tools[i, j]
+  magazine[i, j] >= job_tools[schedule[i], j]
 );
 
 constraint forall(i in JOBS)(

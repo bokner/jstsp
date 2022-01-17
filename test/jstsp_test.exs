@@ -64,7 +64,7 @@ defmodule JstspTest do
     assert_schedule(sample.schedule, data, ys_optimal)
   end
 
-  @tag timeout: 150_000
+  @tag timeout: 300_000
   test "dominant/dominated jobs" do
     ## Following Y/S example ('An enumeration algorithm....')
     ys_optimal = 13 ## The optimal value claimed by Y/S
@@ -102,11 +102,12 @@ defmodule JstspTest do
       |> Map.put(:J, length(reduced_job_list))
       |> Map.put(:job_tools, reduced_job_list)
     {:ok, model_results} = JSTSP.run_model(data,
-        solver: "yuck",
+        solver: "cplex",
+        symmetry_breaking: false,
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 120_000,
+        time_limit: 180_000,
         warm_start: %{schedule: reduced_list},
-        upper_bound: ys_optimal + 5
+        upper_bound: ys_optimal + 3
       )
 
     assert model_results.objective == ys_optimal
@@ -277,7 +278,7 @@ defmodule JstspTest do
         symmetry_breaking: false,
         solver: "cplex",
         solution_handler: JSTSP.MinizincHandler,
-        time_limit: 1200_000
+        time_limit: 1800_000
       )
 
     switches = count_switches(model_results.schedule, model_results.magazine)
