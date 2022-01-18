@@ -176,7 +176,7 @@ defmodule JSTSP do
       {:error, error} -> error
         other ->
           Logger.error("Unexpected result for lower bound: #{inspect other}")
-          0
+          %{lower_bound: 0}
         end
       )
   end
