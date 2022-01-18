@@ -64,6 +64,10 @@ defmodule JSTSP.Utils do
     Path.join(:code.priv_dir(:jstsp), "mzn")
   end
 
+  def mzn_dir_experimental() do
+    Path.join(:code.priv_dir(:jstsp), "mzn-experimental")
+  end
+
   def get_instance_data(file) do
     Path.extname(file) == ".dzn" && file ||
     file

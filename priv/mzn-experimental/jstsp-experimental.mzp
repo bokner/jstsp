@@ -1,0 +1,16 @@
+{
+    "openFiles": [
+        "jstsp.mzn",
+        "da_silva1.dzn",
+        "symmetry_breaking.mzn"
+    ],
+    "openTab": 0,
+    "projectFiles": [
+        "da_silva1.dzn",
+        "jstsp.mzn",
+        "symmetry_breaking.mzn"
+    ],
+    "selectedBuiltinConfigId": "com.google.or-tools",
+    "selectedBuiltinConfigVersion": "7.8.0",
+    "version": 106
+}

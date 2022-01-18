@@ -6,12 +6,17 @@ defmodule JstspTest do
 
   require Logger
 
-  test "check the model output" do
+  setup do
+    %{mzn_dir: mzn_dir_experimental()}
+  end
 
-    data_instance = Path.join([mzn_dir(), "da_silva1.dzn"])
+  test "check the model output", %{mzn_dir: mzn_dir} do
+
+    data_instance = Path.join([mzn_dir, "da_silva1.dzn"])
 
     {:ok, model_results} =
       JSTSP.run_model(data_instance,
+        mzn_dir: mzn_dir,
         model: standard_model(),
         solver: "gecode",
         solution_handler: JSTSP.MinizincHandler
@@ -21,7 +26,7 @@ defmodule JstspTest do
     assert switches == model_results.objective
   end
 
-  test "Yanasse, Senne (1)" do
+  test "Yanasse, Senne (1)", %{mzn_dir: mzn_dir} do
     sample = jstsp_set_sample1()
     our_schedule = [2, 9, 10, 1, 11, 14, 8, 4, 6, 12, 15, 13, 7, 3, 5]
     solution_constraint = {:model_text, schedule_constraint(our_schedule)}
@@ -34,10 +39,10 @@ defmodule JstspTest do
 
     {:ok, model_results} =
       JSTSP.run_model(data,
+        mzn_dir: mzn_dir,
         solver: "cplex",
         model: [solution_constraint | standard_model()],
         solution_handler: JSTSP.MinizincHandler,
-        methods: [],
         time_limit: 150_000
       )
 
@@ -50,7 +55,7 @@ defmodule JstspTest do
     assert model_results.schedule == our_schedule
   end
 
-   test "Yanasse, Senne (2)" do
+   test "Yanasse, Senne (2)", %{mzn_dir: mzn_dir} do
     sample = jstsp_set_sample2()
     job_tools = to_matrix(sample.jobs)
 
@@ -61,11 +66,11 @@ defmodule JstspTest do
       |> Map.put(:job_tools, job_tools)
 
     ## The optimal value claimed by Yanasse, Senne
-    assert_schedule(sample.schedule, data, ys_optimal)
+    assert_schedule(sample.schedule, data, ys_optimal, mzn_dir)
   end
 
   @tag timeout: 300_000
-  test "dominant/dominated jobs" do
+  test "dominant/dominated jobs", %{mzn_dir: mzn_dir} do
     ## Following Y/S example ('An enumeration algorithm....')
     ys_optimal = 13 ## The optimal value claimed by Y/S
     sample = jstsp_set_sample2()
@@ -88,7 +93,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, to_matrix(full_job_list))
 
-    assert_schedule(full_schedule, data, ys_optimal)
+    assert_schedule(full_schedule, data, ys_optimal, mzn_dir)
     ## Run model with reduced job list
     reduced_job_list =
     full_job_list
@@ -104,6 +109,7 @@ defmodule JstspTest do
     {:ok, model_results} = JSTSP.run_model(data,
         solver: "chuffed",
         #symmetry_breaking: false,
+        mzn_dir: mzn_dir,
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 180_000,
         warm_start: %{schedule: reduced_list},
@@ -271,10 +277,11 @@ defmodule JstspTest do
       ]}
   end
 
-  defp assert_schedule(schedule, data, objective) do
+  defp assert_schedule(schedule, data, objective, mzn_dir) do
     solution_constraint = {:model_text, schedule_constraint(schedule)}
     {:ok, model_results} =
       JSTSP.run_model(data,
+        mzn_dir: mzn_dir,
         model: [solution_constraint | standard_model()],
         symmetry_breaking: false,
         solver: "cplex",
