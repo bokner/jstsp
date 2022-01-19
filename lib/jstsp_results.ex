@@ -33,7 +33,7 @@ defmodule JSTSP.Results do
     end)
     |> Enum.group_by(fn rec -> rec.instance end)
     |> then(fn new_results_by_instance ->
-      Enum.map(prev_results,
+      Enum.map(parse_results(results_csv),
         fn rec -> new_result = Map.get(new_results_by_instance, rec.instance)
          new_result && hd(new_result) || rec end)
     end
