@@ -1203,7 +1203,7 @@ instances/MTSP/Laporte/Tabela3/L12-1.txt,8,25,10,org.minizinc.mip.cplex,600000,o
 instances/MTSP/Laporte/Tabela3/L12-10.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,19,"[2, 1, 4, 7, 8, 3, 5, 6]"
 instances/MTSP/Laporte/Tabela3/L12-2.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,19,"[1, 3, 7, 5, 4, 6, 2, 8]"
 instances/MTSP/Laporte/Tabela3/L12-3.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,17,"[2, 5, 6, 1, 7, 3, 8, 4]"
-instances/MTSP/Laporte/Tabela3/L12-4.txt,8,25,10,org.minizinc.mip.cplex,600000,satisfied,16,"[1, 4, 5, 7, 6, 3, 2, 8]"
+instances/MTSP/Laporte/Tabela3/L12-4.txt,8,25,10,org.chuffed.chuffed,900000,optimal,16,"[1, 4, 5, 6, 8, 2, 7, 3]"
 instances/MTSP/Laporte/Tabela3/L12-5.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,21,"[1, 8, 3, 2, 6, 4, 7, 5]"
 instances/MTSP/Laporte/Tabela3/L12-6.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,16,"[2, 7, 8, 3, 1, 5, 4, 6]"
 instances/MTSP/Laporte/Tabela3/L12-7.txt,8,25,10,org.minizinc.mip.cplex,600000,optimal,21,"[1, 5, 8, 7, 2, 6, 3, 4]"
