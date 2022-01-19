@@ -1618,7 +1618,7 @@ instances/MTSP/Crama/Tabela3/s1n004.txt,10,10,6,yuck,300000,optimal,4,"[1, 10, 6
 instances/MTSP/Crama/Tabela3/s1n005.txt,10,10,6,yuck,300000,optimal,4,"[1, 9, 4, 7, 3, 8, 10, 6, 5, 2]"
 instances/MTSP/Crama/Tabela3/s1n006.txt,10,10,6,yuck,300000,optimal,4,"[4, 8, 9, 10, 1, 5, 2, 6, 3, 7]"
 instances/MTSP/Crama/Tabela3/s1n007.txt,10,10,6,yuck,300000,optimal,4,"[6, 8, 2, 10, 1, 4, 9, 3, 5, 7]"
-instances/MTSP/Crama/Tabela3/s1n008.txt,10,10,6,yuck,300000,satisfied,6,"[1, 8, 5, 9, 6, 4, 10, 7, 3, 2]"
+instances/MTSP/Crama/Tabela3/s1n008.txt,10,10,6,org.chuffed.chuffed,900000,optimal,6,"[3, 5, 7, 4, 6, 1, 8, 2, 10, 9]"
 instances/MTSP/Crama/Tabela3/s1n009.txt,10,10,6,yuck,300000,optimal,4,"[1, 2, 8, 6, 9, 3, 5, 10, 7, 4]"
 instances/MTSP/Crama/Tabela3/s1n010.txt,10,10,6,yuck,300000,optimal,4,"[1, 6, 7, 3, 2, 4, 5, 9, 10, 8]"
 instances/MTSP/Crama/Tabela4/s1n001.txt,10,10,7,yuck,300000,optimal,3,"[3, 5, 6, 2, 8, 1, 9, 10, 4, 7]"
