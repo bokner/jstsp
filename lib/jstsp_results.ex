@@ -97,6 +97,11 @@ defmodule JSTSP.Results do
         || prev_result)
   end
 
+  def merge_results(prev_results, new_results) do
+    Enum.map(Enum.zip(prev_results, new_results),
+      fn {prev, new} -> JSTSP.Results.choose_best(prev, new) end)
+  end
+
   defp success?(result) do
     !Map.has_key?(result, :error)
   end
