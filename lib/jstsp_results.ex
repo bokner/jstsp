@@ -186,15 +186,15 @@ defmodule JSTSP.Results do
   end
   def yanasse_beam_search_results() do
     obks = [
-      %{instance: "L22-3", obks: 18, our: 22, ys: 18.2},
+      %{instance: "L22-3", obks: 18, our: 21, ys: 18.2},
       %{instance: "L22-4", obks: 15, our: 16, ys: 17},
-      %{instance: "L22-5", obks: 17, our: 19, ys: 17},
+      %{instance: "L22-5", obks: 17, our: 18, ys: 17},
       %{instance: "L22-6", obks: 15, our: 17, ys: 16},
       %{instance: "L22-8", obks: 19, our: 21, ys: 19.6},
-      %{instance: "L22-9", obks: 18, our: 19, ys: 18},
+      %{instance: "L22-9", obks: 18, our: 18, ys: 18},
       %{instance: "L22-10", obks: 16, our: 19, ys: 17},
       %{instance: "L23-2", obks: 10, our: 10, ys: 10},
-      %{instance: "L23-3", obks: 10, our: 11, ys: 11},
+      %{instance: "L23-3", obks: 10, our: 10, ys: 11},
       %{instance: "L25-6", obks: 5, our: 5, ys: 6}
     ]
 
