@@ -107,13 +107,13 @@ defmodule JstspTest do
       |> Map.put(:J, length(reduced_job_list))
       |> Map.put(:job_tools, reduced_job_list)
     {:ok, model_results} = JSTSP.run_model(data,
-        solver: "chuffed",
+        solver: "cplex",
         #symmetry_breaking: false,
         mzn_dir: mzn_dir,
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 180_000,
         warm_start: %{schedule: reduced_list},
-        upper_bound: ys_optimal + 5,
+        #upper_bound: ys_optimal + 5,
         lower_bound: ys_optimal
       )
 
