@@ -66,7 +66,7 @@ defmodule JstspTest do
       |> Map.put(:job_tools, job_tools)
 
     ## The optimal value claimed by Yanasse, Senne
-    assert_schedule(sample.schedule, data, ys_optimal, mzn_dir)
+    assert_schedule(sample.schedule, data, ys_optimal)
   end
 
   @tag timeout: 300_000
@@ -93,7 +93,7 @@ defmodule JstspTest do
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, to_matrix(full_job_list))
 
-    assert_schedule(full_schedule, data, ys_optimal, mzn_dir)
+    assert_schedule(full_schedule, data, ys_optimal)
     ## Run model with reduced job list
     reduced_job_list =
     full_job_list
@@ -277,21 +277,7 @@ defmodule JstspTest do
       ]}
   end
 
-  defp assert_schedule(schedule, data, objective, mzn_dir) do
-    solution_constraint = {:model_text, schedule_constraint(schedule)}
-    {:ok, model_results} =
-      JSTSP.run_model(data,
-        mzn_dir: mzn_dir,
-        model: [solution_constraint | standard_model()],
-        symmetry_breaking: false,
-        solver: "cplex",
-        solution_handler: JSTSP.MinizincHandler,
-        time_limit: 1800_000
-      )
-
-    switches = count_switches(model_results.schedule, model_results.magazine)
-    assert switches == model_results.objective
-    assert model_results.objective == objective
-
+  defp assert_schedule(schedule, data, objective) do
+    assert optimize_switches(data, schedule) == objective
   end
 end

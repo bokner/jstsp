@@ -233,6 +233,22 @@ defmodule JSTSP.Utils do
     end)
   end
 
+  ## Optimize switches given the sequence of jobs.
+  ## That's what TLP (Tool Loading Problem) solves:
+  ## (Tang, Denardo) Given the job sequence, find the optimal sequence
+  ## of magazine states that minimizes the total number of tool switches
+  def optimize_switches(instance_data, schedule, opts \\ default_solver_opts()) do
+    solution_constraint = {:model_text, schedule_constraint(schedule)}
+    {:ok, model_results} =
+      JSTSP.run_model(instance_data,
+        model: [solution_constraint | opts[:model]],
+        symmetry_breaking: false,
+        solver: "cplex"
+      )
+
+    count_switches(model_results.schedule, model_results.magazine)
+
+  end
   def ignore_symmetry_flag(bool \\ false) do
     "-D mzn_ignore_symmetry_breaking_constraints=#{bool}"
   end
