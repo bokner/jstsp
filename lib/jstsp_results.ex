@@ -15,7 +15,7 @@ defmodule JSTSP.Results do
     end)
     |> Enum.with_index(1)
     |> Enum.map(fn {rec, idx} ->
-      Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})", ansi_color: :green)
+      Logger.info("Instance: #{rec.instance} (UB = #{rec.objective}) (#{idx} of #{:erlang.get(:instance_num)})", ansi_color: :green)
       instance_data = get_instance_data(rec.instance)
       opts =
         Keyword.get(opts, :methods, [:upper_bound])
