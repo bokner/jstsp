@@ -54,13 +54,18 @@ defmodule JSTSP do
   defp build_model(opts, instance_data) do
     opts
     |> build_solver_opts()
+    |> normalize_model()
     |> add_warm_start()
     |> add_constraints(:upper_bound, instance_data, opts)
     |> add_constraints(:lower_bound, instance_data, opts)
     |> add_constraints(:symmetry_breaking, instance_data, opts)
-    |> adjust_model_paths()
+    |> adjust_model_paths(opts[:mzn_dir])
   end
 
+  defp normalize_model(opts) do
+    is_list(opts[:model]) && opts
+    || Keyword.put(opts, :model, [opts[:model]])
+  end
   defp build_data(instance_data) when is_map(instance_data) do
     Map.take(instance_data, [:C, :T, :J, :job_tools])
   end
@@ -100,15 +105,17 @@ defmodule JSTSP do
     || model
   end
 
-  defp adjust_model_paths(model_list) when is_list(model_list) do
+  defp adjust_model_paths(model_list, mzn_dir \\ mzn_dir())
+
+  defp adjust_model_paths(model_list, mzn_dir) when is_list(model_list) do
     Enum.map(model_list,
     fn {:model_text, _} = model_item -> model_item
-      model_file -> Path.join(mzn_dir(), model_file)
+      model_file -> Path.join(mzn_dir, model_file)
     end)
   end
 
-  defp adjust_model_paths(model) do
-    adjust_model_paths([model])
+  defp adjust_model_paths(model, mzn_dir) do
+    adjust_model_paths([model], mzn_dir)
   end
 
   defp warm_start_model(warm_start_map) do

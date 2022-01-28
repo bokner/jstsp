@@ -11,6 +11,8 @@ include "jstsp_vars.mzn";
 
 include "jstsp_constraints.mzn";
 
+include "aux_constraints.mzn";
+
 include "predicates_functions.mzn";
 
 include "symmetry_breaking.mzn";

@@ -14,6 +14,6 @@ int: C;
 %% tool_switches[i, j] is the number of tool switches between jobs i and j.
 array[JOBS, JOBS] of var int: tool_diffs = array2d(JOBS, JOBS, [tool_diff(i, j) | i,j in JOBS]);
 array[JOBS] of TOOLS: tool_count_by_job = [sum(row(job_tools, i)) | i in JOBS];
-JOBS: max_tools = max(tool_count_by_job); 
+TOOLS: max_tools = max(tool_count_by_job); 
 
 %output [show(tool_diffs)];

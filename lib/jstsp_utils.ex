@@ -30,22 +30,23 @@ defmodule JSTSP.Utils do
 
   defp build_extra_flags(opts) do
     Enum.map([:mzn_dir, :symmetry_breaking, :extra_flags],
-      fn flag -> build_flag(flag, Keyword.get(opts, flag, false)) end)
+      fn flag -> build_flag(flag, opts) end)
     |> Enum.join(" ")
     |> then(fn flags -> Keyword.put(opts, :extra_flags, flags) end)
   end
 
-  defp build_flag(:mzn_dir, dir) do
-    dir && mzn_dir_flag(dir) || mzn_dir()
+  defp build_flag(:mzn_dir, opts) do
+    mzn_dir = Keyword.get(opts, :mzn_dir)
+    mzn_dir && mzn_dir_flag(mzn_dir)
   end
 
-  defp build_flag(:symmetry_breaking, _bool) do
+  defp build_flag(:symmetry_breaking, _opts) do
     #ignore_symmetry_flag(!bool)
     nil
   end
 
-  defp build_flag(:extra_flags, extra_flags) do
-    extra_flags || ""
+  defp build_flag(:extra_flags, opts) do
+    Keyword.get(opts, :extra_flags) || ""
   end
 
   def standard_model() do
