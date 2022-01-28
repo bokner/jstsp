@@ -7,7 +7,7 @@ defmodule JstspTest do
   require Logger
 
   setup do
-    %{mzn_dir: mzn_dir_experimental()}
+    %{mzn_dir: mzn_dir()}
   end
 
   test "check the model output", %{mzn_dir: mzn_dir} do
