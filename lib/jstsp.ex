@@ -248,6 +248,7 @@ defmodule JSTSP.MinizincHandler do
     Logger.debug(
       "MZN final status (#{summary.solver}): #{summary.status}, objective: #{MinizincResults.get_solution_objective(last_solution)}"
     )
+    Logger.debug("Time elapsed: #{summary && summary.time_elapsed}")
 
     DefaultHandler.handle_summary(summary)
   end
