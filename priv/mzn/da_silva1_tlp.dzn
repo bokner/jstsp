@@ -1,4 +1,4 @@
-%% Data (1st instance from da Silva et al, "Multicommodity flow model....")
+%% Data to solve TLP (1st instance from da Silva et al, "Multicommodity flow model....")
 J = 6;
 T = 9;
 C = 4;
@@ -11,4 +11,5 @@ job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
                   | 1, 1, 0, 1, 0, 0, 0, 0, 0
         |];
         
-         
+%% checks
+schedule = [4, 2, 5, 3, 6, 1];   

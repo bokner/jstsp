@@ -66,8 +66,9 @@ defmodule JSTSP do
     is_list(opts[:model]) && opts
     || Keyword.put(opts, :model, [opts[:model]])
   end
+  
   defp build_data(instance_data) when is_map(instance_data) do
-    Map.take(instance_data, [:C, :T, :J, :job_tools])
+    Map.take(instance_data, [:C, :T, :J, :job_tools, :schedule])
   end
 
   defp build_data(instance_data) do
