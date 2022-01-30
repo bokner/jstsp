@@ -1,8 +1,8 @@
-defmodule JSTSP do
+defmodule SSP do
   @moduledoc """
-  Module for solving JSTSP instances.
+  Module for solving SSP instances.
   """
-  import JSTSP.Utils
+  import SSP.Utils
   require Logger
 
   def run(instance, opts \\ [])
@@ -228,7 +228,7 @@ defmodule JSTSP do
 
 end
 
-defmodule JSTSP.MinizincHandler do
+defmodule SSP.MinizincHandler do
   @moduledoc false
 
   require Logger

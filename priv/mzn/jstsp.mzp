@@ -1,12 +1,12 @@
 {
     "openFiles": [
-        "jstsp.mzn",
+        "ssp.mzn",
         "da_silva1.dzn"
     ],
     "openTab": 0,
     "projectFiles": [
         "da_silva1.dzn",
-        "jstsp.mzn"
+        "ssp.mzn"
     ],
     "selectedBuiltinConfigId": "org.minizinc.mip.cplex",
     "selectedBuiltinConfigVersion": "12.10.0.0",

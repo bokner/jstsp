@@ -5,11 +5,13 @@
 %% and a capacity of magazine C 
 %% find the sequence of jobs that minimizes the tool switches.
    
-include "jstsp_pars.mzn";
+include "ssp_pars.mzn";
 
-include "jstsp_vars.mzn";
+include "ssp_vars.mzn";
 
-include "jstsp_constraints.mzn";
+include "ssp_constraints.mzn";
+
+include "aux_constraints.mzn";
 
 include "predicates_functions.mzn";
 

@@ -1,7 +1,7 @@
-defmodule JSTSP.Results do
+defmodule SSP.Results do
   require Logger
-  import JSTSP.Utils
-  import JSTSP
+  import SSP.Utils
+  import SSP
 
   def update_results(results_csv, opts) do
     prev_results = parse_results(results_csv)
@@ -23,7 +23,7 @@ defmodule JSTSP.Results do
 
         Keyword.put(acc, update_option, update_option_arg(update_option, instance_data, rec, opts)) end)
 
-      case JSTSP.run_model(instance_data, opts) do
+      case SSP.run_model(instance_data, opts) do
         {:ok, new_result} ->
           choose_best(new_result, rec)
         {:error, error} ->
@@ -105,7 +105,7 @@ defmodule JSTSP.Results do
 
   def merge_results(prev_results, new_results) do
     Enum.map(Enum.zip(prev_results, new_results),
-      fn {prev, new} -> JSTSP.Results.choose_best(prev, new) end)
+      fn {prev, new} -> SSP.Results.choose_best(prev, new) end)
   end
 
   defp success?(result) do
@@ -128,8 +128,8 @@ defmodule JSTSP.Results do
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
       data = get_instance_data(rec.instance)
       %{instance: rec.instance,
-        lower_bound: max(JSTSP.get_lower_bound(data),
-      JSTSP.get_trivial_lower_bound(data))} end)
+        lower_bound: max(SSP.get_lower_bound(data),
+      SSP.get_trivial_lower_bound(data))} end)
   end
 
   def stats(filter_fun \\ fn x -> x end) do

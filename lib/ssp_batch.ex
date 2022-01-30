@@ -1,4 +1,4 @@
-defmodule JSTSP.Batch do
+defmodule SSP.Batch do
   require Logger
 
   def solvers() do
@@ -25,7 +25,7 @@ defmodule JSTSP.Batch do
 
   def run_sync(instance_file, solvers, opts) do
     Enum.map(solvers, fn solver ->
-      JSTSP.run(instance_file, Keyword.merge([solver: solver], opts))
+      SSP.run(instance_file, Keyword.merge([solver: solver], opts))
     end)
   end
 
@@ -34,7 +34,7 @@ defmodule JSTSP.Batch do
       solvers,
       fn solver ->
         instance_file
-        |> JSTSP.run(Keyword.merge([solver: solver], opts))
+        |> SSP.run(Keyword.merge([solver: solver], opts))
       end,
       max_concurrency: length(solvers()),
       timeout: opts[:time_limit] * 2

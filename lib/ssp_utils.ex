@@ -1,10 +1,10 @@
-defmodule JSTSP.Utils do
+defmodule SSP.Utils do
   require Logger
 
   def default_solver_opts do
     [
       solver: "cplex",
-      solution_handler: JSTSP.MinizincHandler,
+      solution_handler: SSP.MinizincHandler,
       time_limit: 300_000,
       model: standard_model(),
       mzn_dir: mzn_dir(),
@@ -15,7 +15,7 @@ defmodule JSTSP.Utils do
   def default_set_cover_opts do
     [
       solver: "cplex",
-      solution_handler: JSTSP.MinizincHandler,
+      solution_handler: SSP.MinizincHandler,
       time_limit: 300_000,
       mzn_dir: mzn_dir(),
       model: "setcover.mzn"
@@ -55,18 +55,18 @@ defmodule JSTSP.Utils do
 
   def core_model() do
     [
-      "jstsp_pars.mzn",
-      "jstsp_vars.mzn",
-    "jstsp_constraints.mzn",
+      "ssp_pars.mzn",
+      "ssp_vars.mzn",
+    "ssp_constraints.mzn",
     "predicates_functions.mzn"]
   end
 
   def mzn_dir() do
-    Path.join(:code.priv_dir(:jstsp), "mzn")
+    Path.join(:code.priv_dir(:ssp), "mzn")
   end
 
   def mzn_dir_experimental() do
-    Path.join(:code.priv_dir(:jstsp), "mzn-experimental")
+    Path.join(:code.priv_dir(:ssp), "mzn-experimental")
   end
 
   def get_instance_data(file) do
@@ -142,7 +142,7 @@ defmodule JSTSP.Utils do
 
   def csv_to_cubdb(csv_file) do
     csv_file
-    |> JSTSP.Results.parse_results()
+    |> SSP.Results.parse_results()
     |> Enum.each(fn rec -> to_cubdb(rec) end)
   end
 
@@ -248,7 +248,7 @@ defmodule JSTSP.Utils do
 
   def optimize_switches(instance_data, sequence, _opts) when is_map(instance_data) do
     {:ok, model_results} =
-      JSTSP.run_model(Map.put(instance_data, :sequence, sequence),
+      SSP.run_model(Map.put(instance_data, :sequence, sequence),
         model: "tlp.mzn",
         solver: "cplex",
         symmetry_breaking: false

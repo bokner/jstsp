@@ -1,5 +1,5 @@
-defmodule JSTSP.Benchmark do
-  import JSTSP.Utils
+defmodule SSP.Benchmark do
+  import SSP.Utils
 
   def benchmark(instance, opts \\ default_solver_opts())
 
@@ -10,7 +10,7 @@ defmodule JSTSP.Benchmark do
   end
 
   def benchmark(instance, opts) when is_map(instance) do
-    JSTSP.run_model(instance, opts)
+    SSP.run_model(instance, opts)
   end
   def benchmark15x15(opts) do
     benchmark("instances/MTSP/Laporte/Tabela5/L1-2.txt", opts)

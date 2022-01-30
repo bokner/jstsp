@@ -1,8 +1,8 @@
-defmodule JstspTest do
+defmodule SSPTest do
   use ExUnit.Case
-  doctest JSTSP
+  doctest SSP
 
-  import JSTSP.Utils
+  import SSP.Utils
 
   require Logger
 
@@ -15,11 +15,11 @@ defmodule JstspTest do
     data_instance = Path.join([mzn_dir, "da_silva1.dzn"])
 
     {:ok, model_results} =
-      JSTSP.run_model(data_instance,
+      SSP.run_model(data_instance,
         mzn_dir: mzn_dir,
         model: standard_model(),
         solver: "gecode",
-        solution_handler: JSTSP.MinizincHandler
+        solution_handler: SSP.MinizincHandler
       )
 
     switches = count_switches(model_results.sequence, model_results.magazine)
@@ -27,7 +27,7 @@ defmodule JstspTest do
   end
 
   test "Yanasse, Senne (1)", %{mzn_dir: mzn_dir} do
-    sample = jstsp_set_sample1()
+    sample = ssp_set_sample1()
     our_sequence = [2, 9, 10, 1, 11, 14, 8, 4, 6, 12, 15, 13, 7, 3, 5]
     solution_constraint = {:model_text, sequence_constraint(our_sequence)}
     job_tools = to_matrix(sample.jobs)
@@ -38,11 +38,11 @@ defmodule JstspTest do
       |> Map.put(:job_tools, job_tools)
 
     {:ok, model_results} =
-      JSTSP.run_model(data,
+      SSP.run_model(data,
         mzn_dir: mzn_dir,
         solver: "cplex",
         model: [solution_constraint | standard_model()],
-        solution_handler: JSTSP.MinizincHandler,
+        solution_handler: SSP.MinizincHandler,
         time_limit: 150_000
       )
 
@@ -56,7 +56,7 @@ defmodule JstspTest do
   end
 
    test "Yanasse, Senne (2)", %{mzn_dir: mzn_dir} do
-    sample = jstsp_set_sample2()
+    sample = ssp_set_sample2()
     job_tools = to_matrix(sample.jobs)
 
     ys_optimal = 13
@@ -73,7 +73,7 @@ defmodule JstspTest do
   test "dominant/dominated jobs", %{mzn_dir: mzn_dir} do
     ## Following Y/S example ('An enumeration algorithm....')
     ys_optimal = 13 ## The optimal value claimed by Y/S
-    sample = jstsp_set_sample2()
+    sample = ssp_set_sample2()
     full_job_list = sample.jobs
     dominant_jobs = dominant_jobs(full_job_list)
     dominated =
@@ -106,11 +106,11 @@ defmodule JstspTest do
       |> Map.take([:C, :T])
       |> Map.put(:J, length(reduced_job_list))
       |> Map.put(:job_tools, reduced_job_list)
-    {:ok, model_results} = JSTSP.run_model(data,
+    {:ok, model_results} = SSP.run_model(data,
         solver: "cplex",
         #symmetry_breaking: false,
         mzn_dir: mzn_dir,
-        solution_handler: JSTSP.MinizincHandler,
+        solution_handler: SSP.MinizincHandler,
         time_limit: 180_000,
         warm_start: %{sequence: reduced_list},
         #upper_bound: ys_optimal + 5,
@@ -122,14 +122,14 @@ defmodule JstspTest do
 
   test "set cover" do
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    cover_results = JSTSP.job_cover(instance)
+    cover_results = SSP.job_cover(instance)
     cover = cover_results.cover
     jobs = cover_results.job_tools
     cover_jobs = Enum.flat_map(0..length(cover) - 1,
       fn pos -> Enum.at(cover, pos) == 1 && [Enum.at(jobs, pos)]
         || []
     end)
-    tool_matrix = JSTSP.Utils.transpose(cover_jobs)
+    tool_matrix = SSP.Utils.transpose(cover_jobs)
     ## All tools are covered by job set cover...
     assert Enum.all?(tool_matrix, fn tool -> Enum.sum(tool) > 0 end)
     ## ... and any reduction of job set cover does not cover it
@@ -147,16 +147,16 @@ defmodule JstspTest do
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
-    lb = JSTSP.get_lower_bound(data)
+    lb = SSP.get_lower_bound(data)
 
     ## Lower bound based on set-cover method
     assert lb.lower_bound == 50
     ## Trivial lower bound
-    assert JSTSP.get_trivial_lower_bound(data) == 40
+    assert SSP.get_trivial_lower_bound(data) == 40
 
   end
 
-  defp jstsp_sample() do
+  defp ssp_sample() do
     %{
       job_tools: [
         [1, 0, 0, 1, 0, 0, 0, 1, 1],
@@ -171,7 +171,7 @@ defmodule JstspTest do
   end
 
   ## Yanasse, Senne (Beam Search paper)
-  def jstsp_set_sample1() do
+  def ssp_set_sample1() do
     %{
       C: 10,
       J: 15,
@@ -224,7 +224,7 @@ defmodule JstspTest do
   # T23 = {1,2,5,8,9,10,12,14,15}
   # T24 = {3,4,5,6,8,9,11,12,13,14}
   # T25 = {1,2,4,7,9,10,12,13,14,15}
-  def jstsp_set_sample2() do
+  def ssp_set_sample2() do
     jobs = [
       [1, 2],
       [5, 15],
