@@ -118,7 +118,7 @@ defmodule JSTSP.Utils do
   end
 
   def to_csv(results, filename) do
-    header = "instance,J,T,C,solver,time_limit(msec),status,objective,schedule"
+    header = "instance,J,T,C,solver,time_limit(msec),status,objective,sequence"
 
     :ok =
       results
@@ -159,11 +159,11 @@ defmodule JSTSP.Utils do
           time_limit: time_limit,
           status: status,
           objective: objective,
-          schedule: schedule
+          sequence: sequence
         }
       ) do
-    schedule_str = is_list(schedule) && "#{inspect schedule}" || schedule
-    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{schedule_str}\""
+    sequence_str = is_list(sequence) && "#{inspect sequence}" || sequence
+    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{sequence_str}\""
   end
 
   def non_optimal_results(csv_file) do
@@ -182,43 +182,43 @@ defmodule JSTSP.Utils do
     "constraint cost >= #{lower_bound};"
   end
 
-  def lower_bound_constraint(lower_bound_map = %{partial_schedule: partial_schedule, total_jobs: total_jobs}) do
-    schedule_str =
+  def lower_bound_constraint(lower_bound_map = %{partial_sequence: partial_sequence, total_jobs: total_jobs}) do
+    sequence_str =
       Enum.join(
-        lower_bound_map.partial_schedule ++
-        List.duplicate("_", total_jobs - length(partial_schedule)), ", ")
+        lower_bound_map.partial_sequence ++
+        List.duplicate("_", total_jobs - length(partial_sequence)), ", ")
     lower_bound_constraint(lower_bound_map.lower_bound) <> "\n" <>
-    "schedule = [#{schedule_str}];\n"
+    "sequence = [#{sequence_str}];\n"
   end
 
   def lower_bound_constraint(_lower_bound) do
     ""
   end
 
-  def schedule_constraint(schedule) do
-    "constraint schedule = #{inspect(schedule)};"
+  def sequence_constraint(sequence) do
+    "constraint sequence = #{inspect(sequence)};"
   end
 
-  def normalize_schedule(schedule) do
-    List.first(schedule) < List.last(schedule) && schedule
-    || Enum.reverse(schedule)
+  def normalize_sequence(sequence) do
+    List.first(sequence) < List.last(sequence) && sequence
+    || Enum.reverse(sequence)
   end
-  def schedule_warm_start(schedule) do
+  def sequence_warm_start(sequence) do
     """
-    annotation warm_start(schedule,
-      #{MinizincData.elixir_to_dzn(schedule)}
+    annotation warm_start(sequence,
+      #{MinizincData.elixir_to_dzn(sequence)}
     );
     """
   end
 
-  def count_switches(schedule, magazine) do
+  def count_switches(sequence, magazine) do
     magazine_sequence =
       Enum.map(
-        0..(length(schedule) - 1),
+        0..(length(sequence) - 1),
         fn i ->
           magazine
           |> Enum.at(i)
-          #|> Enum.at(Enum.at(schedule, i) - 1)
+          #|> Enum.at(Enum.at(sequence, i) - 1)
           |> to_toolset()
         end
       )
@@ -238,23 +238,23 @@ defmodule JSTSP.Utils do
   ## That's what TLP (Tool Loading Problem) solves:
   ## (Tang, Denardo) Given the job sequence, find the optimal sequence
   ## of magazine states that minimizes the total number of tool switches
-  def optimize_switches(instance_file, schedule, opts \\ default_solver_opts())
+  def optimize_switches(instance_file, sequence, opts \\ default_solver_opts())
 
-  def optimize_switches(instance_file, schedule, opts) when is_binary(instance_file) do
+  def optimize_switches(instance_file, sequence, opts) when is_binary(instance_file) do
     instance_file
     |> get_instance_data()
-    |> optimize_switches(schedule, opts)
+    |> optimize_switches(sequence, opts)
   end
 
-  def optimize_switches(instance_data, schedule, _opts) when is_map(instance_data) do
+  def optimize_switches(instance_data, sequence, _opts) when is_map(instance_data) do
     {:ok, model_results} =
-      JSTSP.run_model(Map.put(instance_data, :schedule, schedule),
+      JSTSP.run_model(Map.put(instance_data, :sequence, sequence),
         model: "tlp.mzn",
         solver: "cplex",
         symmetry_breaking: false
       )
 
-    count_switches(schedule, model_results.magazine)
+    count_switches(sequence, model_results.magazine)
 
   end
   def ignore_symmetry_flag(bool \\ false) do
@@ -318,40 +318,40 @@ defmodule JSTSP.Utils do
   end
   @doc """
     Purpose:
-    The schedule is a solution of the problem, reduced by removing
+    The sequence is a solution of the problem, reduced by removing
     dominated jobs (Yanasse, Senne, 2009).
     We want to merge dominated jobs back in by putting each of them
     after their dominant jobs (as obviously this won't change the switch count).
   """
-  def merge_dominated(schedule, dominant_jobs) do
+  def merge_dominated(sequence, dominant_jobs) do
     dominance_map = Enum.group_by(dominant_jobs,
       fn {_d, by} -> by end, fn {d, _by} -> d end)
-      schedule
+      sequence
       |> merge_dominated_impl(dominance_map)
   end
 
   @doc """
-  Purpose: build the warmup schedule by putting the partial schedule
+  Purpose: build the warmup sequence by putting the partial sequence
   (obtained for example, with set-cover method) in front
   """
-  def warmup_schedule(schedule, partial_schedule) do
-    normalize_schedule(
-    partial_schedule ++
-      Enum.reduce(partial_schedule, schedule, fn el, acc -> List.delete(acc, el) end)
+  def warmup_sequence(sequence, partial_sequence) do
+    normalize_sequence(
+    partial_sequence ++
+      Enum.reduce(partial_sequence, sequence, fn el, acc -> List.delete(acc, el) end)
     )
   end
 
-  defp merge_dominated_impl(schedule, dominance_map) when map_size(dominance_map) == 0 do
-    schedule
+  defp merge_dominated_impl(sequence, dominance_map) when map_size(dominance_map) == 0 do
+    sequence
   end
 
-  defp merge_dominated_impl(schedule, dominance_map) do
-    {dominance_map, schedule} = Enum.reduce(schedule, {dominance_map, []},
-    fn job_idx, {reduced_map, merged_schedule} = _acc ->
-      merged = merged_schedule ++ [job_idx | Map.get(reduced_map, job_idx, [])]
+  defp merge_dominated_impl(sequence, dominance_map) do
+    {dominance_map, sequence} = Enum.reduce(sequence, {dominance_map, []},
+    fn job_idx, {reduced_map, merged_sequence} = _acc ->
+      merged = merged_sequence ++ [job_idx | Map.get(reduced_map, job_idx, [])]
       {Map.delete(reduced_map, job_idx), merged}
     end)
-    merge_dominated_impl(schedule, dominance_map)
+    merge_dominated_impl(sequence, dominance_map)
 
   end
 end

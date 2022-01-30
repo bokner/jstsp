@@ -22,14 +22,14 @@ defmodule JstspTest do
         solution_handler: JSTSP.MinizincHandler
       )
 
-    switches = count_switches(model_results.schedule, model_results.magazine)
+    switches = count_switches(model_results.sequence, model_results.magazine)
     assert switches == model_results.objective
   end
 
   test "Yanasse, Senne (1)", %{mzn_dir: mzn_dir} do
     sample = jstsp_set_sample1()
-    our_schedule = [2, 9, 10, 1, 11, 14, 8, 4, 6, 12, 15, 13, 7, 3, 5]
-    solution_constraint = {:model_text, schedule_constraint(our_schedule)}
+    our_sequence = [2, 9, 10, 1, 11, 14, 8, 4, 6, 12, 15, 13, 7, 3, 5]
+    solution_constraint = {:model_text, sequence_constraint(our_sequence)}
     job_tools = to_matrix(sample.jobs)
 
     data =
@@ -47,12 +47,12 @@ defmodule JstspTest do
       )
 
     ys_optimal = 13
-    switches = count_switches(model_results.schedule, model_results.magazine)
+    switches = count_switches(model_results.sequence, model_results.magazine)
     assert switches == model_results.objective
     ## The optimal value claimed by Yanasse, Senne
     assert model_results.objective == ys_optimal
-    ## ... is obtained by our model with different schedule
-    assert model_results.schedule == our_schedule
+    ## ... is obtained by our model with different sequence
+    assert model_results.sequence == our_sequence
   end
 
    test "Yanasse, Senne (2)", %{mzn_dir: mzn_dir} do
@@ -66,7 +66,7 @@ defmodule JstspTest do
       |> Map.put(:job_tools, job_tools)
 
     ## The optimal value claimed by Yanasse, Senne
-    assert_schedule(sample.schedule, data, ys_optimal)
+    assert_sequence(sample.sequence, data, ys_optimal)
   end
 
   @tag timeout: 300_000
@@ -81,19 +81,19 @@ defmodule JstspTest do
       |> Enum.map(fn {d, _by} -> d end)
       |> Enum.uniq()
 
-    reduced_list = Enum.reject(sample.schedule, fn f -> f in dominated end)
+    reduced_list = Enum.reject(sample.sequence, fn f -> f in dominated end)
     assert length(dominated) == 10
     assert length(reduced_list) == 15
-    ## Merge dominated jobs into the reduced schedule
-    full_schedule = merge_dominated(reduced_list, dominant_jobs)
-    assert length(full_schedule) == 25
-    ## Validate the full schedule
+    ## Merge dominated jobs into the reduced sequence
+    full_sequence = merge_dominated(reduced_list, dominant_jobs)
+    assert length(full_sequence) == 25
+    ## Validate the full sequence
     data =
       sample
       |> Map.take([:C, :T, :J])
       |> Map.put(:job_tools, to_matrix(full_job_list))
 
-    assert_schedule(full_schedule, data, ys_optimal)
+    assert_sequence(full_sequence, data, ys_optimal)
     ## Run model with reduced job list
     reduced_job_list =
     full_job_list
@@ -112,7 +112,7 @@ defmodule JstspTest do
         mzn_dir: mzn_dir,
         solution_handler: JSTSP.MinizincHandler,
         time_limit: 180_000,
-        warm_start: %{schedule: reduced_list},
+        warm_start: %{sequence: reduced_list},
         #upper_bound: ys_optimal + 5,
         lower_bound: ys_optimal
       )
@@ -193,7 +193,7 @@ defmodule JstspTest do
         [3, 4, 5, 6, 8, 9, 11, 12, 13, 14],
         [1, 2, 4, 7, 9, 10, 12, 13, 14, 15]
       ],
-      schedule: [3, 12, 6, 11, 1, 8, 4, 14, 5, 9, 2, 10, 7, 13, 15]
+      sequence: [3, 12, 6, 11, 1, 8, 4, 14, 5, 9, 2, 10, 7, 13, 15]
     }
   end
 
@@ -258,7 +258,7 @@ defmodule JstspTest do
       T: 15,
       C: 10,
       jobs: jobs,
-      schedule: [11, 22,
+      sequence: [11, 22,
       5, 2, ## dominated jobs
       14, 21,
       8, ## dominated
@@ -277,7 +277,7 @@ defmodule JstspTest do
       ]}
   end
 
-  defp assert_schedule(schedule, data, objective) do
-    assert optimize_switches(data, schedule) == objective
+  defp assert_sequence(sequence, data, objective) do
+    assert optimize_switches(data, sequence) == objective
   end
 end

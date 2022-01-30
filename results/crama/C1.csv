@@ -1,4 +1,4 @@
-instance,J,T,C,solver,time_limit(msec),status,objective,schedule
+instance,J,T,C,solver,time_limit(msec),status,objective,sequence
 instances/MTSP/Crama/Tabela1/s1n001.txt,10,10,4,yuck,300000,satisfied,7,"[5, 6, 2, 7, 1, 8, 4, 9, 3, 10]"
 instances/MTSP/Crama/Tabela1/s1n002.txt,10,10,4,cplex,300000,optimal,12,"[1, 10, 6, 5, 7, 2, 8, 4, 3, 9]"
 instances/MTSP/Crama/Tabela1/s1n003.txt,10,10,4,cplex,300000,optimal,10,"[3, 4, 8, 2, 10, 1, 6, 9, 7, 5]"

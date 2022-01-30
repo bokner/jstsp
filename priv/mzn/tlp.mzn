@@ -13,7 +13,7 @@ array[JOBS, TOOLS] of 0..1:  job_tools;
 int: C;  
 
 %% Job sequence as an input 
-array[JOBS] of JOBS: schedule;
+array[JOBS] of JOBS: sequence;
 
 %% Decision variables.
 %%
@@ -25,10 +25,10 @@ var int: cost;
 
 include "globals.mzn";
 
-constraint all_different(schedule);
+constraint all_different(sequence);
 
 constraint forall(i in JOBS, j in TOOLS)(
-  magazine[i, j] >= job_tools[schedule[i], j]
+  magazine[i, j] >= job_tools[sequence[i], j]
 );
 
 constraint forall(i in JOBS)(

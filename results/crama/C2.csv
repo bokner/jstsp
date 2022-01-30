@@ -1,4 +1,4 @@
-instance,J,T,C,solver,time_limit(msec),status,objective,schedule
+instance,J,T,C,solver,time_limit(msec),status,objective,sequence
 instances/MTSP/Crama/Tabela1/s2n001.txt,15,20,6,yuck,30000,satisfied,23,"[2, 1, 13, 15, 3, 4, 14, 9, 5, 10, 11, 12, 8, 7, 6]"
 instances/MTSP/Crama/Tabela1/s2n002.txt,15,20,6,yuck,30000,satisfied,20,"[2, 1, 12, 6, 3, 9, 10, 14, 8, 4, 5, 15, 7, 11, 13]"
 instances/MTSP/Crama/Tabela1/s2n003.txt,15,20,6,org.minizinc.mip.cplex,120000,satisfied,22,"[5, 8, 9, 3, 13, 1, 12, 7, 4, 14, 15, 2, 10, 11, 6]"

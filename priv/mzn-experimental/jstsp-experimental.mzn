@@ -3,7 +3,7 @@
 %% the set J of jobs, 
 %% the requried set of tools for each of the jobs,
 %% and a capacity of magazine C -
-%% find the schedule of jobs that minimizes the tool switches.
+%% find the sequence of jobs that minimizes the tool switches.
 
 include "globals.mzn";
 
@@ -20,9 +20,9 @@ array[JOBS, TOOLS] of 0..1:  job_tools;
 int: C;      
 
 %% Decision vars
-array[JOBS] of var JOBS: schedule;
+array[JOBS] of var JOBS: sequence;
 
-constraint all_different(schedule);
+constraint all_different(sequence);
 
 %% Magazine content
 array[JOBS, TOOLS] of var 0..1: magazine; 
@@ -36,9 +36,9 @@ constraint forall(i in JOBS)(
 );
 
 %% Symmetry breaks
-%constraint lex_lesseq(schedule, reverse(schedule));
+%constraint lex_lesseq(sequence, reverse(sequence));
 
-constraint schedule[1] < schedule[J];
+constraint sequence[1] < sequence[J];
 
 
 
@@ -51,5 +51,5 @@ constraint cost >= T - C;
 %solve minimize cost;
 
 function var int: switches(int: current_job, int: next_job) =
-         sum(t in TOOLS)(bool2int(magazine[schedule[next_job], t] > magazine[schedule[current_job], t]));
+         sum(t in TOOLS)(bool2int(magazine[sequence[next_job], t] > magazine[sequence[current_job], t]));
 

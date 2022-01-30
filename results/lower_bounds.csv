@@ -1,4 +1,4 @@
-instance,lower_bound,partial_schedule
+instance,lower_bound,partial_sequence
 instances/MTSP/Catanzaro/C1-1.txt,31,"[16, 7, 22, 21, 24]"
 instances/MTSP/Catanzaro/C1-10.txt,30,"[14, 3, 24, 1, 8, 19]"
 instances/MTSP/Catanzaro/C1-2.txt,30,"[5, 13, 22, 14, 6]"

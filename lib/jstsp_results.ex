@@ -44,9 +44,9 @@ defmodule JSTSP.Results do
     rec.objective
   end
 
-  defp update_option_arg(:warm_start, _data, _rec = %{schedule: schedule_str}, _opts) do
-    {schedule, _} = Code.eval_string(schedule_str)
-    %{schedule: normalize_schedule(schedule)}
+  defp update_option_arg(:warm_start, _data, _rec = %{sequence: sequence_str}, _opts) do
+    {sequence, _} = Code.eval_string(sequence_str)
+    %{sequence: normalize_sequence(sequence)}
   end
 
   defp update_option_arg(:lower_bound, data, _rec, _opts) do
@@ -62,7 +62,7 @@ defmodule JSTSP.Results do
         instance: rec["instance"],
         objective: String.to_integer(rec["objective"]),
         status: String.to_atom(rec["status"]),
-        schedule: rec["schedule"],
+        sequence: rec["sequence"],
         T: String.to_integer(rec["T"]),
         J: String.to_integer(rec["J"]),
         C: String.to_integer(rec["C"]),
@@ -80,7 +80,7 @@ defmodule JSTSP.Results do
       %{
         instance: rec["instance"],
         lower_bound: String.to_integer(rec["lower_bound"]),
-        partial_schedule: rec["partial_schedule"]
+        partial_sequence: rec["partial_sequence"]
       }
     end)
   end

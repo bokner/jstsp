@@ -1,9 +1,9 @@
 include "globals.mzn";
 
-constraint all_different(schedule);
+constraint all_different(sequence);
 
 constraint forall(i in JOBS, j in TOOLS)(
-  magazine[i, j] >= job_tools[schedule[i], j]
+  magazine[i, j] >= job_tools[sequence[i], j]
 );
 
 constraint forall(i in JOBS)(
@@ -18,7 +18,9 @@ constraint forall(t in TOOLS) (
 
 constraint cost = sum(tool_switches); 
 
+%constraint cost = sum(j in 1..J-1) (switches(j, j+1));
+
 % Trivial lower bound
 constraint cost >= T - C;
 
-%output [show([tool_count_by_job[schedule[i]] | i in JOBS])];
+%output [show([tool_count_by_job[sequence[i]] | i in JOBS])];

@@ -38,7 +38,7 @@ defmodule JSTSP do
               time_limit: solver_opts[:time_limit],
               objective: MinizincResults.get_solution_objective(solution),
               status: MinizincResults.get_status(res.summary),
-              schedule: MinizincResults.get_solution_value(solution, "schedule"),
+              sequence: MinizincResults.get_solution_value(solution, "sequence"),
               magazine: MinizincResults.get_solution_value(solution, "magazine")
             }
           end)
@@ -66,9 +66,9 @@ defmodule JSTSP do
     is_list(opts[:model]) && opts
     || Keyword.put(opts, :model, [opts[:model]])
   end
-  
+
   defp build_data(instance_data) when is_map(instance_data) do
-    Map.take(instance_data, [:C, :T, :J, :job_tools, :schedule])
+    Map.take(instance_data, [:C, :T, :J, :job_tools, :sequence])
   end
 
   defp build_data(instance_data) do
@@ -173,7 +173,7 @@ defmodule JSTSP do
         lower_bound =
         Map.get(res, :status) == :optimal && Map.get(res, :objective) || 0
         %{lower_bound: lower_bound,
-          partial_schedule: get_partial_schedule(res, instance_data),
+          partial_sequence: get_partial_sequence(res, instance_data),
           total_jobs: instance_data[:J]
         }
         |> tap(fn lb ->
@@ -189,8 +189,8 @@ defmodule JSTSP do
       )
   end
 
-  defp get_partial_schedule(res, instance_data) do
-    Enum.map(res.schedule, fn job_num ->
+  defp get_partial_sequence(res, instance_data) do
+    Enum.map(res.sequence, fn job_num ->
       Enum.find_index(instance_data.job_tools, fn job ->
         job == Enum.at(res.job_tools, job_num - 1)
       end) + 1
@@ -221,8 +221,8 @@ defmodule JSTSP do
     [
       upper_bound: &upper_bound_constraint/1,
       lower_bound: &lower_bound_constraint/1,
-      schedule_constraint: &schedule_constraint/1,
-      warm_start: &schedule_warm_start/1
+      sequence_constraint: &sequence_constraint/1,
+      warm_start: &sequence_warm_start/1
     ]
   end
 

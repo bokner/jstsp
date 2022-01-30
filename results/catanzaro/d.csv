@@ -1,4 +1,4 @@
-instance,J,T,C,solver,time_limit(msec),status,objective,schedule
+instance,J,T,C,solver,time_limit(msec),status,objective,sequence
 instances/MTSP/Catanzaro/D1-1.txt,40,60,20,org.minizinc.mip.cplex,900000,satisfied,230,"[24, 8, 28, 1, 2, 31, 38, 21, 20, 18, 25, 7, 36, 27, 15, 33, 30, 6, 39, 37, 4, 34, 10, 3, 22, 16, 23, 12, 11, 32, 5, 19, 9, 14, 17, 13, 40, 26, 29, 35]"
 instances/MTSP/Catanzaro/D1-10.txt,40,60,20,org.minizinc.mip.cplex,900000,satisfied,236,"[9, 23, 40, 34, 31, 11, 13, 15, 35, 36, 30, 39, 37, 28, 27, 22, 29, 19, 32, 10, 16, 7, 20, 5, 6, 4, 21, 1, 38, 8, 12, 26, 17, 3, 2, 24, 33, 14, 25, 18]"
 instances/MTSP/Catanzaro/D1-2.txt,40,60,20,org.minizinc.mip.cplex,900000,satisfied,190,"[17, 19, 5, 16, 13, 18, 15, 33, 30, 7, 35, 22, 2, 34, 10, 26, 8, 4, 14, 9, 29, 6, 27, 32, 23, 31, 40, 38, 3, 11, 37, 24, 12, 39, 1, 25, 36, 20, 28, 21]"
