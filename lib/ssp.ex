@@ -3,6 +3,9 @@ defmodule SSP do
   Module for solving SSP instances.
   """
   import SSP.Utils
+
+  alias SSP.SetCover
+
   require Logger
 
   def run(instance, opts \\ [])
@@ -67,13 +70,6 @@ defmodule SSP do
     || Keyword.put(opts, :model, [opts[:model]])
   end
 
-  defp build_data(instance_data) when is_map(instance_data) do
-    Map.take(instance_data, [:C, :T, :J, :job_tools, :sequence])
-  end
-
-  defp build_data(instance_data) do
-    instance_data
-  end
 
 
   defp add_warm_start(opts) do
@@ -106,18 +102,6 @@ defmodule SSP do
     || model
   end
 
-  defp adjust_model_paths(model_list, mzn_dir \\ mzn_dir())
-
-  defp adjust_model_paths(model_list, mzn_dir) when is_list(model_list) do
-    Enum.map(model_list,
-    fn {:model_text, _} = model_item -> model_item
-      model_file -> Path.join(mzn_dir, model_file)
-    end)
-  end
-
-  defp adjust_model_paths(model, mzn_dir) do
-    adjust_model_paths([model], mzn_dir)
-  end
 
   defp warm_start_model(warm_start_map) do
     warm_start_annotations =
@@ -134,40 +118,14 @@ defmodule SSP do
       """)
   end
 
-  def job_cover(instance, opts \\ [])
 
-  def job_cover(instance, opts) when is_binary(instance) do
-    instance
-    |> get_instance_data()
-    |> job_cover(opts)
-  end
-
-  def job_cover(instance_data, opts) when is_map(instance_data) do
-    solver_opts = Keyword.merge(opts, default_set_cover_opts())
-    model = solver_opts[:model]
-    |> adjust_model_paths()
-    {:ok, res} = MinizincSolver.solve_sync(model, build_data(instance_data), solver_opts)
-
-    res
-    |> MinizincResults.get_last_solution()
-    |> then(fn solution ->
-      %{
-        solver: res.summary.solver,
-        time_limit: solver_opts[:time_limit],
-        objective: MinizincResults.get_solution_objective(solution),
-        status: MinizincResults.get_status(res.summary),
-        cover: MinizincResults.get_solution_value(solution, "cover")
-      }
-    end)
-    |> Map.merge(instance_data)
-  end
 
   def get_lower_bound(instance_data, opts \\ [])
 
   def get_lower_bound(instance_data, opts) when is_map(instance_data) do
     solver_opts = build_solver_opts(opts)
     instance_data
-      |> job_cover(solver_opts)
+      |> SetCover.job_cover(solver_opts)
       |> run_on_cover(solver_opts)
       |> then(fn {:ok, res} ->
         lower_bound =

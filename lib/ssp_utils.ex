@@ -12,14 +12,17 @@ defmodule SSP.Utils do
     ]
   end
 
-  def default_set_cover_opts do
-    [
-      solver: "cplex",
-      solution_handler: SSP.MinizincHandler,
-      time_limit: 300_000,
-      mzn_dir: mzn_dir(),
-      model: "setcover.mzn"
-    ] |> build_extra_flags()
+  def adjust_model_paths(model_list, mzn_dir \\ mzn_dir())
+
+  def adjust_model_paths(model_list, mzn_dir) when is_list(model_list) do
+    Enum.map(model_list,
+    fn {:model_text, _} = model_item -> model_item
+      model_file -> Path.join(mzn_dir, model_file)
+    end)
+  end
+
+  def adjust_model_paths(model, mzn_dir) do
+    adjust_model_paths([model], mzn_dir)
   end
 
   ## Build solver opts from model opts
@@ -28,7 +31,7 @@ defmodule SSP.Utils do
     |> build_extra_flags()
   end
 
-  defp build_extra_flags(opts) do
+  def build_extra_flags(opts) do
     Enum.map([:mzn_dir, :symmetry_breaking, :extra_flags],
       fn flag -> build_flag(flag, opts) end)
     |> Enum.join(" ")
@@ -110,6 +113,15 @@ defmodule SSP.Utils do
     }
 
   end
+
+  def build_data(instance_data) when is_map(instance_data) do
+    Map.take(instance_data, [:C, :T, :J, :job_tools, :sequence])
+  end
+
+  def build_data(instance_data) do
+    instance_data
+  end
+
 
   def transpose(matrix) do
     matrix
@@ -354,4 +366,5 @@ defmodule SSP.Utils do
     merge_dominated_impl(sequence, dominance_map)
 
   end
+
 end

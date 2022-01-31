@@ -122,7 +122,7 @@ defmodule SSPTest do
 
   test "set cover" do
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    cover_results = SSP.job_cover(instance)
+    cover_results = SSP.SetCover.job_cover(instance)
     cover = cover_results.cover
     jobs = cover_results.job_tools
     cover_jobs = Enum.flat_map(0..length(cover) - 1,
