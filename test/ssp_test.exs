@@ -122,7 +122,7 @@ defmodule SSPTest do
 
   test "set cover" do
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    cover_results = SSP.SetCover.job_cover(instance)
+    cover_results = SSP.SetCover.job_cover(instance, mzn_dir: "priv/mzn-sets")
     cover = cover_results.cover
     jobs = cover_results.job_tools
     cover_jobs = Enum.flat_map(0..length(cover) - 1,
@@ -134,11 +134,15 @@ defmodule SSPTest do
     assert Enum.all?(tool_matrix, fn tool -> Enum.sum(tool) > 0 end)
     ## ... and any reduction of job set cover does not cover it
     ## (that is, the cover cannot be reduced to its subset)
-    Enum.each(0..length(cover_jobs) - 1, fn pos ->
-        refute Enum.all?(tool_matrix, fn tool -> Enum.sum(List.delete_at(tool, pos)) > 0
-      end)
-    end)
-    assert length(cover_jobs) == 7
+
+    ### !!!! This was true for the minimal cover
+    ### We now have extended cover
+
+    #Enum.each(0..length(cover_jobs) - 1, fn pos ->
+    #    refute Enum.all?(tool_matrix, fn tool -> Enum.sum(List.delete_at(tool, pos)) > 0
+    #  end)
+    #end)
+    assert length(cover_jobs) == 8
 
   end
 
@@ -147,10 +151,10 @@ defmodule SSPTest do
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
-    lb = SSP.get_lower_bound(data)
+    lb = SSP.get_lower_bound(data, mzn_dir: "priv/mzn-sets")
 
     ## Lower bound based on set-cover method
-    assert lb.lower_bound == 50
+    assert lb.lower_bound == 58
     ## Trivial lower bound
     assert SSP.get_trivial_lower_bound(data) == 40
 

@@ -21,10 +21,18 @@ defmodule SSP.SetCover do
   end
 
   def job_cover(instance_data, opts) when is_map(instance_data) do
-    solver_opts = Keyword.merge(opts, default_set_cover_opts())
-    model = solver_opts[:model]
-    |> adjust_model_paths()
-    {:ok, res} = MinizincSolver.solve_sync(model, build_data(instance_data), solver_opts)
+    solver_opts =
+      default_set_cover_opts()
+      |> Keyword.merge(opts)
+      |> Keyword.put(:solution_handler, default_set_cover_opts()[:solution_handler])
+      |> Keyword.put(:solver, default_set_cover_opts()[:solver])
+
+    model =
+    default_set_cover_opts()[:model]
+    |> adjust_model_paths(
+      solver_opts[:mzn_dir]
+      )
+    {:ok, res} = MinizincSolver.solve_sync(model, build_setcover_data(instance_data), solver_opts)
 
     res
     |> MinizincResults.get_last_solution()
@@ -38,6 +46,10 @@ defmodule SSP.SetCover do
       }
     end)
     |> Map.merge(instance_data)
+  end
+
+  defp build_setcover_data(instance_data) do
+    Map.take(instance_data, [:T, :J, :job_tools])
   end
 end
 

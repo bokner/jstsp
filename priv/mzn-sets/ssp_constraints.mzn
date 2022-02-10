@@ -2,12 +2,22 @@ include "globals.mzn";
 
 constraint all_different(sequence);
 
+
 constraint forall(i in JOBS, j in TOOLS)(
-  magazine[i, j] >= job_tools[sequence[i], j]
+   magazine[i, j] >= job_tools[sequence[i], j]
 );
 
+
+/*
+constraint forall(j in JOBS)(
+  job_tool_sets[sequence[j]] subset magazine_row_sets[j]
+);
+*/
+
+
 constraint forall(i in JOBS)(
-  sum(row(magazine, i)) = C
+  %sum(row(magazine, i)) = C
+  card(magazine_row_sets[i]) <= C
 );
 
 %array[TOOLS] of var JOBS0: tool_switches;
@@ -31,9 +41,9 @@ constraint forall(j in JOBS)(
         [magazine[j, t] = 1 | t in TOOLS])
 );
 
-constraint cost = sum(j in 1..J-1)(
+/* constraint cost = sum(j in 1..J-1)(
   card(magazine_row_sets[j+1] diff magazine_row_sets[j])
-);
+); */
 
 
 
@@ -54,11 +64,6 @@ constraint forall(t in TOOLS)(
 );
 
 constraint cost = sum(tool_switches);
-
-% constraint cost = sum(j in 1..J-1)(
-%   card(magazine_row_sets[j+1] diff magazine_row_sets[j])
-% );
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% 
