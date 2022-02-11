@@ -67,11 +67,6 @@ defmodule SSP.Utils do
   def mzn_dir() do
     Path.join(:code.priv_dir(:ssp), "mzn")
   end
-
-  def mzn_dir_experimental() do
-    Path.join(:code.priv_dir(:ssp), "mzn-experimental")
-  end
-
   def get_instance_data(file) do
     Path.extname(file) == ".dzn" && file ||
     file
