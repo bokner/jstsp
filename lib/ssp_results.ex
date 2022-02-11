@@ -49,8 +49,8 @@ defmodule SSP.Results do
     %{sequence: normalize_sequence(sequence)}
   end
 
-  defp update_option_arg(:lower_bound, data, _rec, _opts) do
-    get_lower_bound(data).lower_bound
+  defp update_option_arg(:lower_bound, data, _rec, opts) do
+    get_lower_bound(data, opts).lower_bound
   end
 
   def parse_results(csv_results) do
@@ -116,7 +116,7 @@ defmodule SSP.Results do
     result.status == :optimal
   end
 
-  def get_lower_bounds(csv_results) do
+  def get_lower_bounds(csv_results, opts \\ default_solver_opts()) do
     csv_results
     |> parse_results()
     |> Enum.reject(fn rec -> optimal?(rec) end)
@@ -128,7 +128,7 @@ defmodule SSP.Results do
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
       data = get_instance_data(rec.instance)
       %{instance: rec.instance,
-        lower_bound: max(SSP.get_lower_bound(data),
+        lower_bound: max(SSP.get_lower_bound(data, opts),
       SSP.get_trivial_lower_bound(data))} end)
   end
 

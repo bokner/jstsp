@@ -120,7 +120,7 @@ defmodule SSP do
 
 
 
-  def get_lower_bound(instance_data, opts \\ [])
+  def get_lower_bound(instance_data, opts \\ default_solver_opts())
 
   def get_lower_bound(instance_data, opts) when is_map(instance_data) do
     solver_opts = build_solver_opts(opts)
