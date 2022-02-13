@@ -162,7 +162,7 @@ instances/MTSP/Catanzaro/D4-9.txt,40,60,30,org.minizinc.mip.cplex,900000,satisfi
 instances/MTSP/Laporte/Tabela6/L22-3.txt,25,25,10,org.minizinc.mip.cplex,1800000,satisfied,20,"[1, 6, 24, 25, 23, 19, 15, 13, 12, 14, 5, 16, 4, 3, 7, 2, 10, 8, 11, 18, 17, 9, 22, 20, 21]"
 instances/MTSP/Laporte/Tabela6/L22-4.txt,25,25,10,org.chuffed.chuffed,3600000,optimal,15,"[5, 24, 6, 10, 23, 12, 22, 19, 18, 7, 2, 16, 17, 8, 14, 21, 4, 9, 25, 15, 20, 13, 3, 11, 1]"
 instances/MTSP/Laporte/Tabela6/L22-5.txt,25,25,10,org.minizinc.mip.cplex,1800000,satisfied,18,"[5, 19, 4, 21, 9, 20, 8, 22, 15, 24, 11, 6, 16, 7, 2, 1, 18, 3, 14, 12, 25, 17, 23, 10, 13]"
-instances/MTSP/Laporte/Tabela6/L22-6.txt,25,25,10,org.minizinc.mip.cplex,300000,satisfied,16,"[22, 7, 17, 14, 3, 4, 10, 18, 9, 25, 8, 13, 5, 12, 15, 6, 23, 21, 24, 19, 11, 2, 16, 1, 20]"
+instances/MTSP/Laporte/Tabela6/L22-6.txt,25,25,10,org.chuffed.chuffed,3600000,optimal,15,"[25, 17, 4, 14, 7, 18, 3, 22, 8, 10, 11, 9, 1, 6, 19, 24, 5, 12, 13, 2, 20, 23, 16, 15, 21]"
 instances/MTSP/Laporte/Tabela6/L22-8.txt,25,25,10,org.minizinc.mip.cplex,1200000,satisfied,21,"[12, 5, 8, 3, 4, 1, 21, 10, 16, 7, 19, 6, 22, 20, 15, 9, 2, 13, 25, 17, 18, 14, 11, 23, 24]"
 instances/MTSP/Laporte/Tabela6/L22-9.txt,25,25,10,org.minizinc.mip.cplex,1800000,satisfied,18,"[12, 15, 21, 7, 23, 10, 24, 25, 20, 11, 17, 3, 4, 9, 2, 1, 13, 6, 16, 8, 5, 22, 18, 19, 14]"
 instances/MTSP/Laporte/Tabela6/L22-10.txt,25,25,10,org.minizinc.mip.cplex,1200000,satisfied,19,"[3, 25, 22, 11, 1, 10, 7, 21, 20, 13, 6, 14, 16, 9, 15, 5, 19, 8, 24, 4, 12, 23, 2, 18, 17]"

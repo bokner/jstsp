@@ -205,7 +205,7 @@ defmodule SSP.Results do
       %{instance: "L22-3", obks: 18, our: 21, ys: 18.2},
       %{instance: "L22-4", obks: 15, our: 15, ys: 17},
       %{instance: "L22-5", obks: 17, our: 18, ys: 17},
-      %{instance: "L22-6", obks: 15, our: 16, ys: 16},
+      %{instance: "L22-6", obks: 15, our: 15, ys: 16},
       %{instance: "L22-8", obks: 19, our: 21, ys: 19.6},
       %{instance: "L22-9", obks: 18, our: 18, ys: 18},
       %{instance: "L22-10", obks: 16, our: 19, ys: 17},
