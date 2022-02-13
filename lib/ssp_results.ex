@@ -54,22 +54,31 @@ defmodule SSP.Results do
   end
 
   def parse_results(csv_results) do
+    fields = [
+      :instance, :objective, :status,
+      :sequence, :T, :J, :C, :solver, :time_limit
+    ]
     csv_results
     |> File.stream!()
     |> CSV.decode(headers: true)
     |> Enum.map(fn {:ok, rec} ->
-      %{
-        instance: rec["instance"],
-        objective: String.to_integer(rec["objective"]),
-        status: String.to_atom(rec["status"]),
-        sequence: rec["sequence"],
-        T: String.to_integer(rec["T"]),
-        J: String.to_integer(rec["J"]),
-        C: String.to_integer(rec["C"]),
-        solver: rec["solver"],
-        time_limit: String.to_integer(rec["time_limit(msec)"])
-      }
+      Enum.reduce(fields, %{}, fn field, acc ->
+        value = rec["#{field}"]
+        value && Map.put(acc, field, parse_field(field, value))
+        || acc end)
     end)
+  end
+
+  defp parse_field(field, value) when field in [:objective, :T, :J, :C, :time_limit] do
+    String.to_integer(value)
+  end
+
+  defp parse_field(:status, value) do
+    String.to_atom(value)
+  end
+
+  defp parse_field(_field, value) do
+    value
   end
 
   def parse_lower_bounds(lb_csv) do
@@ -116,7 +125,8 @@ defmodule SSP.Results do
     result.status == :optimal
   end
 
-  def get_lower_bounds(csv_results, opts \\ default_solver_opts()) do
+  def get_lower_bounds(csv_results, opts \\ []) do
+    opts = Keyword.merge(default_solver_opts(), opts)
     csv_results
     |> parse_results()
     |> Enum.reject(fn rec -> optimal?(rec) end)
