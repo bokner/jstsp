@@ -202,7 +202,7 @@ defmodule SSP.Results do
   end
   def yanasse_beam_search_results() do
     obks = [
-      %{instance: "L22-3", obks: 18, our: 21, ys: 18.2},
+      %{instance: "L22-3", obks: 18, our: 20, ys: 18.2},
       %{instance: "L22-4", obks: 15, our: 15, ys: 17},
       %{instance: "L22-5", obks: 17, our: 18, ys: 17},
       %{instance: "L22-6", obks: 15, our: 15, ys: 16},
