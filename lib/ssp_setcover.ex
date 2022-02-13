@@ -66,7 +66,8 @@ defmodule SSP.Minizinc.SetCoverHandler do
       summary
       |> MinizincResults.get_last_solution()
       |> MinizincResults.get_solution_value("cover")
-      |> Enum.sum()
+      |> then(fn cover -> cover && Enum.sum(cover) || 0 end)
+
     Logger.debug(
       "SET COVER: final status (#{summary.solver}): #{summary.status}, cover size: #{cover_size}"
     )
