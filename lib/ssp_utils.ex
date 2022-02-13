@@ -125,7 +125,7 @@ defmodule SSP.Utils do
   end
 
   def to_csv(results, filename) do
-    header = "instance,J,T,C,solver,time_limit(msec),status,objective,sequence"
+    header = "instance,J,T,C,solver,time_limit,status,objective,sequence"
 
     :ok =
       results
