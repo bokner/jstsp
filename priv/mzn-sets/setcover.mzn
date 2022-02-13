@@ -24,7 +24,7 @@ var 1..T*J: obj;
 
 constraint obj = sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
 
-constraint sum(cover) >= min(8, J div 2); 
+constraint sum(cover) >= min(10, J); 
 
 solve minimize obj;
 
