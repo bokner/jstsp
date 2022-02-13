@@ -203,9 +203,9 @@ defmodule SSP.Results do
   def yanasse_beam_search_results() do
     obks = [
       %{instance: "L22-3", obks: 18, our: 21, ys: 18.2},
-      %{instance: "L22-4", obks: 15, our: 16, ys: 17},
+      %{instance: "L22-4", obks: 15, our: 15, ys: 17},
       %{instance: "L22-5", obks: 17, our: 18, ys: 17},
-      %{instance: "L22-6", obks: 15, our: 17, ys: 16},
+      %{instance: "L22-6", obks: 15, our: 16, ys: 16},
       %{instance: "L22-8", obks: 19, our: 21, ys: 19.6},
       %{instance: "L22-9", obks: 18, our: 18, ys: 18},
       %{instance: "L22-10", obks: 16, our: 19, ys: 17},
@@ -214,8 +214,8 @@ defmodule SSP.Results do
       %{instance: "L25-6", obks: 5, our: 5, ys: 6}
     ]
 
-    Enum.map(obks, fn {name, _value} ->
-      "instances/MTSP/Laporte/Tabela6/#{name}.txt"
+    Enum.map(obks, fn inst ->
+      "instances/MTSP/Laporte/Tabela6/#{inst.instance}.txt"
     end)
   end
 end
