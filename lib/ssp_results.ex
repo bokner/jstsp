@@ -49,27 +49,36 @@ defmodule SSP.Results do
     %{sequence: normalize_sequence(sequence)}
   end
 
-  defp update_option_arg(:lower_bound, data, _rec, _opts) do
-    get_lower_bound(data).lower_bound
+  defp update_option_arg(:lower_bound, data, _rec, opts) do
+    get_lower_bound(data, opts).lower_bound
   end
 
   def parse_results(csv_results) do
+    fields = [
+      :instance, :objective, :status,
+      :sequence, :T, :J, :C, :solver, :time_limit
+    ]
     csv_results
     |> File.stream!()
     |> CSV.decode(headers: true)
     |> Enum.map(fn {:ok, rec} ->
-      %{
-        instance: rec["instance"],
-        objective: String.to_integer(rec["objective"]),
-        status: String.to_atom(rec["status"]),
-        sequence: rec["sequence"],
-        T: String.to_integer(rec["T"]),
-        J: String.to_integer(rec["J"]),
-        C: String.to_integer(rec["C"]),
-        solver: rec["solver"],
-        time_limit: String.to_integer(rec["time_limit(msec)"])
-      }
+      Enum.reduce(fields, %{}, fn field, acc ->
+        value = rec["#{field}"]
+        value && Map.put(acc, field, parse_field(field, value))
+        || acc end)
     end)
+  end
+
+  defp parse_field(field, value) when field in [:objective, :T, :J, :C, :time_limit] do
+    String.to_integer(value)
+  end
+
+  defp parse_field(:status, value) do
+    String.to_atom(value)
+  end
+
+  defp parse_field(_field, value) do
+    value
   end
 
   def parse_lower_bounds(lb_csv) do
@@ -116,7 +125,8 @@ defmodule SSP.Results do
     result.status == :optimal
   end
 
-  def get_lower_bounds(csv_results) do
+  def get_lower_bounds(csv_results, opts \\ []) do
+    opts = Keyword.merge(default_solver_opts(), opts)
     csv_results
     |> parse_results()
     |> Enum.reject(fn rec -> optimal?(rec) end)
@@ -128,7 +138,7 @@ defmodule SSP.Results do
       Logger.info("Instance: #{rec.instance} (#{idx} of #{:erlang.get(:instance_num)})")
       data = get_instance_data(rec.instance)
       %{instance: rec.instance,
-        lower_bound: max(SSP.get_lower_bound(data),
+        lower_bound: max(SSP.get_lower_bound(data, opts),
       SSP.get_trivial_lower_bound(data))} end)
   end
 
@@ -193,19 +203,19 @@ defmodule SSP.Results do
   def yanasse_beam_search_results() do
     obks = [
       %{instance: "L22-3", obks: 18, our: 21, ys: 18.2},
-      %{instance: "L22-4", obks: 15, our: 16, ys: 17},
+      %{instance: "L22-4", obks: 15, our: 15, ys: 17},
       %{instance: "L22-5", obks: 17, our: 18, ys: 17},
-      %{instance: "L22-6", obks: 15, our: 17, ys: 16},
+      %{instance: "L22-6", obks: 15, our: 15, ys: 16},
       %{instance: "L22-8", obks: 19, our: 21, ys: 19.6},
       %{instance: "L22-9", obks: 18, our: 18, ys: 18},
-      %{instance: "L22-10", obks: 16, our: 19, ys: 17},
+      %{instance: "L22-10", obks: 16, our: 16, ys: 17},
       %{instance: "L23-2", obks: 10, our: 10, ys: 10},
       %{instance: "L23-3", obks: 10, our: 10, ys: 11},
       %{instance: "L25-6", obks: 5, our: 5, ys: 6}
     ]
 
-    Enum.map(obks, fn {name, _value} ->
-      "instances/MTSP/Laporte/Tabela6/#{name}.txt"
+    Enum.map(obks, fn inst ->
+      "instances/MTSP/Laporte/Tabela6/#{inst.instance}.txt"
     end)
   end
 end

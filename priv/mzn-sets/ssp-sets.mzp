@@ -1,0 +1,36 @@
+{
+    "openFiles": [
+        "ssp_constraints.mzn",
+        "ssp_vars.mzn",
+        "ssp-gecode.mzn",
+        "setcover.mzn",
+        "ssp_pars.mzn",
+        "solve_definition.mzn",
+        "symmetry_breaking.mzn",
+        "predicates_functions.mzn",
+        "tlp.mzn",
+        "ssp.mzn",
+        "wst.mzn",
+        "da_silva1_tlp.dzn",
+        "da_silva1.dzn"
+    ],
+    "openTab": 12,
+    "projectFiles": [
+        "da_silva1.dzn",
+        "da_silva1_tlp.dzn",
+        "predicates_functions.mzn",
+        "setcover.mzn",
+        "solve_definition.mzn",
+        "ssp-gecode.mzn",
+        "ssp.mzn",
+        "ssp_constraints.mzn",
+        "ssp_pars.mzn",
+        "ssp_vars.mzn",
+        "symmetry_breaking.mzn",
+        "tlp.mzn",
+        "wst.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.3.0",
+    "version": 106
+}

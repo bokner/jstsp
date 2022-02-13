@@ -1,4 +1,4 @@
-instance,J,T,C,solver,time_limit(msec),status,objective,sequence
+instance,J,T,C,solver,time_limit,status,objective,sequence
 instances/MTSP/Laporte/Tabela6/L1-1.txt,20,15,5,org.minizinc.mip.cplex,180000,satisfied,29,"[8, 11, 13, 3, 17, 14, 2, 4, 7, 5, 12, 6, 1, 9, 18, 10, 20, 15, 16, 19]"
 instances/MTSP/Laporte/Tabela6/L1-10.txt,20,15,5,org.minizinc.mip.cplex,180000,satisfied,26,"[4, 3, 10, 9, 17, 12, 1, 7, 18, 16, 6, 11, 20, 14, 8, 2, 5, 19, 15, 13]"
 instances/MTSP/Laporte/Tabela6/L1-2.txt,20,15,5,org.minizinc.mip.cplex,180000,satisfied,25,"[3, 15, 7, 17, 16, 14, 5, 11, 2, 6, 13, 8, 18, 1, 4, 9, 10, 20, 12, 19]"

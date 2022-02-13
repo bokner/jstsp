@@ -67,11 +67,6 @@ defmodule SSP.Utils do
   def mzn_dir() do
     Path.join(:code.priv_dir(:ssp), "mzn")
   end
-
-  def mzn_dir_experimental() do
-    Path.join(:code.priv_dir(:ssp), "mzn-experimental")
-  end
-
   def get_instance_data(file) do
     Path.extname(file) == ".dzn" && file ||
     file
@@ -130,7 +125,7 @@ defmodule SSP.Utils do
   end
 
   def to_csv(results, filename) do
-    header = "instance,J,T,C,solver,time_limit(msec),status,objective,sequence"
+    header = "instance,J,T,C,solver,time_limit,status,objective,sequence"
 
     :ok =
       results
