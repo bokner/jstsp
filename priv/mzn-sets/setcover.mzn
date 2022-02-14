@@ -7,6 +7,7 @@ int: T;
 set of int: TOOLS = 1..T;
 set of int: JOBS = 1..J;
 array[JOBS, TOOLS] of 0..1:  job_tools;
+int: cover_lb;
 
 %% Decision vars
 array[JOBS] of var 0..1: cover;
@@ -24,7 +25,7 @@ var 1..T*J: obj;
 
 constraint obj = sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
 
-constraint sum(cover) >= min(10, J); 
+constraint sum(cover) >= min(cover_lb, J); 
 
 solve minimize obj;
 

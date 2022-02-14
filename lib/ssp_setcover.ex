@@ -9,6 +9,7 @@ defmodule SSP.SetCover do
       time_limit: 300_000,
       mzn_dir: mzn_dir(),
       model: "setcover.mzn",
+      cover_lb: 10, ## minimum length of set cover
     ] |> build_extra_flags()
   end
 
@@ -32,7 +33,7 @@ defmodule SSP.SetCover do
     |> adjust_model_paths(
       solver_opts[:mzn_dir]
       )
-    {:ok, res} = MinizincSolver.solve_sync(model, build_setcover_data(instance_data), solver_opts)
+    {:ok, res} = MinizincSolver.solve_sync(model, build_setcover_data(instance_data, opts), solver_opts)
 
     res
     |> MinizincResults.get_last_solution()
@@ -48,8 +49,11 @@ defmodule SSP.SetCover do
     |> Map.merge(instance_data)
   end
 
-  defp build_setcover_data(instance_data) do
-    Map.take(instance_data, [:T, :J, :job_tools])
+  defp build_setcover_data(instance_data, opts) do
+    cover_lb = Keyword.get(opts, :cover_lb, default_set_cover_opts()[:cover_lb])
+    instance_data
+    |> Map.take([:T, :J, :job_tools])
+    |> Map.put(:cover_lb, cover_lb)
   end
 end
 

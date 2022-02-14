@@ -122,7 +122,7 @@ defmodule SSPTest do
 
   test "set cover" do
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
-    cover_results = SSP.SetCover.job_cover(instance, mzn_dir: "priv/mzn-sets")
+    cover_results = SSP.SetCover.job_cover(instance, mzn_dir: "priv/mzn-sets", cover_lb: 8)
     cover = cover_results.cover
     jobs = cover_results.job_tools
     cover_jobs = Enum.flat_map(0..length(cover) - 1,
@@ -151,7 +151,7 @@ defmodule SSPTest do
 
     instance = "instances/MTSP/Crama/Tabela1/s4n009.txt"
     data = get_instance_data(instance)
-    lb = SSP.get_lower_bound(data, mzn_dir: "priv/mzn-sets")
+    lb = SSP.get_lower_bound(data, mzn_dir: "priv/mzn-sets", cover_lb: 8)
 
     ## Lower bound based on set-cover method
     assert lb.lower_bound == 58
