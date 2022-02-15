@@ -33,20 +33,22 @@ defmodule SSP.SetCover do
     |> adjust_model_paths(
       solver_opts[:mzn_dir]
       )
-    {:ok, res} = MinizincSolver.solve_sync(model, build_setcover_data(instance_data, opts), solver_opts)
-
-    res
-    |> MinizincResults.get_last_solution()
-    |> then(fn solution ->
-      %{
-        solver: res.summary.solver,
-        time_limit: solver_opts[:time_limit],
-        objective: MinizincResults.get_solution_objective(solution),
-        status: MinizincResults.get_status(res.summary),
-        cover: MinizincResults.get_solution_value(solution, "cover")
-      }
-    end)
-    |> Map.merge(instance_data)
+    case MinizincSolver.solve_sync(model, build_setcover_data(instance_data, opts), solver_opts) do
+      {:ok, res} ->
+        res
+        |> MinizincResults.get_last_solution()
+        |> then(fn solution ->
+          %{
+            solver: res.summary.solver,
+            time_limit: solver_opts[:time_limit],
+            objective: MinizincResults.get_solution_objective(solution),
+            status: MinizincResults.get_status(res.summary),
+            cover: MinizincResults.get_solution_value(solution, "cover")
+          }
+        end)
+        |> Map.merge(instance_data)
+      {:error, error} -> {:error, error}
+    end
   end
 
   defp build_setcover_data(instance_data, opts) do

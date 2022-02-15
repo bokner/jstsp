@@ -193,8 +193,7 @@ defmodule SSP.Results do
     optimal?(instance_data) && 0
     ||
     (
-      lb = Map.get(instance_data, :lower_bound) ||
-        get_lower_bound(get_instance_data(instance_data.instance), time_limit: 60_000).lower_bound
+      lb = Map.get(instance_data, :lower_bound) || 0
       instance_data.objective -
       max(lb, get_trivial_lower_bound(instance_data)
       )
