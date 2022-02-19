@@ -30,7 +30,9 @@ defmodule SSP.Results do
           Logger.error("Error on #{inspect rec.instance} : #{inspect error}")
           rec
       end
+      |> tap(fn _ -> dict_cleanup() end)
     end)
+
     |> Enum.group_by(fn rec -> rec.instance end)
     |> then(fn new_results_by_instance ->
       Enum.map(parse_results(results_csv),
@@ -50,9 +52,22 @@ defmodule SSP.Results do
   end
 
   defp update_option_arg(:lower_bound, data, _rec, opts) do
-    get_lower_bound(data, opts).lower_bound
+    get_lower_bound_info(data, opts, :lower_bound)
   end
 
+  defp update_option_arg(:partial_sequence, data, _rec, opts) do
+    get_lower_bound_info(data, opts, :partial_sequence)
+  end
+
+  defp get_lower_bound_info(data, opts, field) do
+    case :erlang.get(:lower_bound_rec) do
+      :undefined ->
+        lower_bound_rec = get_lower_bound(data, opts)
+        :erlang.put(:lower_bound_rec, lower_bound_rec)
+        lower_bound_rec[field]
+      lower_bound_rec -> lower_bound_rec[field]
+    end
+  end
   def parse_results(csv_results) do
     fields = [
       :instance, :objective, :status,
@@ -79,6 +94,10 @@ defmodule SSP.Results do
 
   defp parse_field(_field, value) do
     value
+  end
+
+  defp dict_cleanup() do
+    Enum.each([:lower_bound_rec], fn key -> :erlang.erase(key) end)
   end
 
   def parse_lower_bounds(lb_csv) do

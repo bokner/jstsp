@@ -17,7 +17,7 @@ int: PARTIAL_SEQ_SIZE;
 set of int: PARTIAL_SEQ = 1..PARTIAL_SEQ_SIZE; 
 array[PARTIAL_SEQ] of JOBS: partial_sequence;
 
-array[JOBS] of var JOBS: sequence;
+%array[JOBS] of var JOBS: sequence;
 
 constraint forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
    position_in_sequence(partial_sequence[i]) < 

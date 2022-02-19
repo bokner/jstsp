@@ -59,6 +59,7 @@ defmodule SSP do
     |> build_solver_opts()
     |> normalize_model()
     |> add_warm_start()
+    |> add_partial_sequence(opts)
     |> add_constraints(:upper_bound, instance_data, opts)
     |> add_constraints(:lower_bound, instance_data, opts)
     |> add_constraints(:symmetry_breaking, instance_data, opts)
@@ -77,6 +78,14 @@ defmodule SSP do
       nil -> opts[:model]
       warm_start_map ->
         [warm_start_model(warm_start_map) | core_model()]
+    end
+  end
+
+  defp add_partial_sequence(model, opts) do
+    case Keyword.get(opts, :partial_sequence) do
+      nil -> model
+      partial_sequence ->
+        [partial_sequence_model(partial_sequence), "partial_sequence.mzn" | model]
     end
   end
 
@@ -116,6 +125,16 @@ defmodule SSP do
       #{warm_start_annotations}
       minimize cost;
       """)
+  end
+
+  defp partial_sequence_model(partial_sequence) do
+    inline_model(
+    """
+    partial_sequence = #{MinizincData.elixir_to_dzn(partial_sequence)};
+    PARTIAL_SEQ_SIZE = #{length(partial_sequence)};
+    """
+
+    )
   end
 
 
