@@ -9,7 +9,7 @@ defmodule SSP.SetCover do
       time_limit: 300_000,
       mzn_dir: mzn_dir(),
       model: "setcover.mzn",
-      cover_lb: 10, ## minimum length of set cover
+      cover_size: 10, ## minimum length of set cover
     ] |> build_extra_flags()
   end
 
@@ -52,10 +52,10 @@ defmodule SSP.SetCover do
   end
 
   defp build_setcover_data(instance_data, opts) do
-    cover_lb = Keyword.get(opts, :cover_lb, default_set_cover_opts()[:cover_lb])
+    cover_size = Keyword.get(opts, :cover_size, default_set_cover_opts()[:cover_size])
     instance_data
     |> Map.take([:T, :J, :job_tools])
-    |> Map.put(:cover_lb, cover_lb)
+    |> Map.put(:cover_size, cover_size)
   end
 end
 
