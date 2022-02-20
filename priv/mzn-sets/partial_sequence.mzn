@@ -16,13 +16,21 @@ then the job sequences are:
 int: PARTIAL_SEQ_SIZE;
 set of int: PARTIAL_SEQ = 1..PARTIAL_SEQ_SIZE; 
 array[PARTIAL_SEQ] of JOBS: partial_sequence;
+array[PARTIAL_SEQ] of JOBS: reversed_partial_sequence = [partial_sequence[PARTIAL_SEQ_SIZE - i + 1] | i in PARTIAL_SEQ];
 
 %array[JOBS] of var JOBS: sequence;
 
 constraint forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
-   position_in_sequence(partial_sequence[i]) < 
-   position_in_sequence(partial_sequence[i+1])
-);
+   (position_in_sequence(partial_sequence[i]) < 
+   position_in_sequence(partial_sequence[i+1]))
+) 
+
+% \/
+% forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
+%    (position_in_sequence(reversed_partial_sequence[i]) < 
+%    position_in_sequence(reversed_partial_sequence[i+1]))
+% )
+;
 
   
 function var int: position_in_sequence(JOBS: value) = 
