@@ -41,9 +41,9 @@ constraint forall(j in JOBS)(
         [magazine[j, t] = 1 | t in TOOLS])
 );
 
-/* constraint cost = sum(j in 1..J-1)(
+constraint cost = sum(j in 1..J-1)(
   card(magazine_row_sets[j+1] diff magazine_row_sets[j])
-); */
+);
 
 
 
