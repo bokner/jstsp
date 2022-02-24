@@ -125,7 +125,7 @@ defmodule SSP.Utils do
   end
 
   def to_csv(results, filename) do
-    header = "instance,J,T,C,solver,time_limit,status,objective,sequence"
+    header = "instance,J,T,C,solver,time_limit,status,objective,sequence,elapsed_time,solve_time"
 
     :ok =
       results
@@ -166,11 +166,13 @@ defmodule SSP.Utils do
           time_limit: time_limit,
           status: status,
           objective: objective,
-          sequence: sequence
+          sequence: sequence,
+          elapsed_time: elapsed_time,
+          solve_time: solve_time
         }
       ) do
     sequence_str = is_list(sequence) && "#{inspect sequence}" || sequence
-    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{sequence_str}\""
+    "#{instance},#{jobs},#{tools},#{capacity},#{solver},#{time_limit},#{status},#{objective},\"#{sequence_str}\",#{elapsed_time},#{inspect solve_time}"
   end
 
   def non_optimal_results(csv_file) do
@@ -262,8 +264,8 @@ defmodule SSP.Utils do
       )
 
     count_switches(sequence, model_results.magazine)
-
   end
+
   def ignore_symmetry_flag(bool \\ false) do
     "-D mzn_ignore_symmetry_breaking_constraints=#{bool}"
   end
@@ -361,5 +363,19 @@ defmodule SSP.Utils do
     merge_dominated_impl(sequence, dominance_map)
 
   end
+
+  def total_solve_time(mzn_summary) when is_map(mzn_summary) do
+    total_solve_time_impl(mzn_summary.solver_stats[:solveTime])
+  end
+
+  defp total_solve_time_impl(solve_time) when is_list(solve_time) do
+    Enum.max(solve_time)
+  end
+
+  defp total_solve_time_impl(solve_time) do
+    solve_time
+  end
+
+
 
 end

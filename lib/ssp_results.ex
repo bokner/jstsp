@@ -71,7 +71,8 @@ defmodule SSP.Results do
   def parse_results(csv_results) do
     fields = [
       :instance, :objective, :status,
-      :sequence, :T, :J, :C, :solver, :time_limit
+      :sequence, :T, :J, :C, :solver,
+      :time_limit, :elapsed_time, :solve_time
     ]
     csv_results
     |> File.stream!()

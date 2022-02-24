@@ -42,7 +42,9 @@ defmodule SSP do
               objective: MinizincResults.get_solution_objective(solution),
               status: MinizincResults.get_status(res.summary),
               sequence: MinizincResults.get_solution_value(solution, "sequence"),
-              magazine: MinizincResults.get_solution_value(solution, "magazine")
+              magazine: MinizincResults.get_solution_value(solution, "magazine"),
+              solve_time: res.summary.solver_stats[:solveTime],
+              elapsed_time: res.summary.time_elapsed
             }
           end)
           |> then(fn res ->
@@ -209,6 +211,8 @@ defmodule SSP.MinizincHandler do
   @moduledoc false
 
   require Logger
+  import SSP.Utils
+
   alias MinizincHandler.Default, as: DefaultHandler
   use MinizincHandler
 
@@ -226,8 +230,11 @@ defmodule SSP.MinizincHandler do
     Logger.debug(
       "MZN final status (#{summary.solver}): #{summary.status}, objective: #{MinizincResults.get_solution_objective(last_solution)}"
     )
-    Logger.debug("Time elapsed: #{summary && summary.time_elapsed}")
-
+    summary &&
+    (
+      Logger.debug("Time elapsed: #{summary.time_elapsed}")
+      Logger.debug("Solve time: #{inspect total_solve_time(summary)}")
+    )
     DefaultHandler.handle_summary(summary)
   end
 
