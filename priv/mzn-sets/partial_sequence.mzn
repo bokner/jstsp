@@ -32,10 +32,9 @@ constraint forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
 % )
 ;
 
+
   
-function var int: position_in_sequence(JOBS: value) = 
-   sum(  [ if value = sequence[i] 
-              then i
-           else 0 endif  
-          | i in index_set(sequence) ]
+      
+function var JOBS: position_in_sequence(JOBS: value) = 
+  sum(i in index_set(sequence))(i *  (value = sequence[i])
    );

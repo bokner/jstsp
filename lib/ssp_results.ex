@@ -8,7 +8,7 @@ defmodule SSP.Results do
     filter_fun = Keyword.get(opts, :filter, fn x -> x end)
 
     prev_results
-    |> Enum.reject(fn rec -> rec.status == :optimal end)
+    |> Enum.reject(fn rec -> opts[:include_optimal] && rec.status == :optimal end)
     |> filter_fun.()
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
@@ -25,21 +25,13 @@ defmodule SSP.Results do
 
       case SSP.run_model(instance_data, opts) do
         {:ok, new_result} ->
-          choose_best(new_result, rec)
+          new_result
         {:error, error} ->
           Logger.error("Error on #{inspect rec.instance} : #{inspect error}")
           rec
       end
       |> tap(fn _ -> dict_cleanup() end)
     end)
-
-    |> Enum.group_by(fn rec -> rec.instance end)
-    |> then(fn new_results_by_instance ->
-      Enum.map(parse_results(results_csv),
-        fn rec -> new_result = Map.get(new_results_by_instance, rec.instance)
-         new_result && hd(new_result) || rec end)
-    end
-    )
   end
 
   defp update_option_arg(:upper_bound, _data, rec, _opts) do
