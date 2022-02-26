@@ -20,17 +20,21 @@ array[PARTIAL_SEQ] of JOBS: reversed_partial_sequence = [partial_sequence[PARTIA
 
 %array[JOBS] of var JOBS: sequence;
 
-constraint forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
-   (position_in_sequence(partial_sequence[i]) < 
-   position_in_sequence(partial_sequence[i+1]))
-) 
+constraint forall(p in 1..PARTIAL_SEQ_SIZE - 1)(
+  value_precede(partial_sequence[p], partial_sequence[p+1], sequence)
+);  
+
+% constraint forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
+%    (position_in_sequence(partial_sequence[i]) < 
+%    position_in_sequence(partial_sequence[i+1]))
+% ) 
 
 % \/
 % forall(i in 1..PARTIAL_SEQ_SIZE - 1)(
 %    (position_in_sequence(reversed_partial_sequence[i]) < 
 %    position_in_sequence(reversed_partial_sequence[i+1]))
 % )
-;
+%;
 
 
   
