@@ -7,11 +7,11 @@ function var TOOLS0: tool_diff(var JOBS: job1, var JOBS: job2) =
     sum(t in TOOLS)(job_tools[job1, t] < job_tools[job2, t]);
     
 
-function var JOBS0: count_tool_switches(int: tool_idx ) = 
+function var JOBS0: count_tool_switches(TOOLS: tool_idx ) =
   let {
     array[JOBS] of var JOBS0: tool_column = col(magazine, tool_idx);
-    array[1..J-1] of var opt JOBS0: diffs = [1 | i in 1..J - 1 where tool_column[i+1] > tool_column[i]]
-  } in sum(diffs); 
+    array[1..J-1] of var opt JOBS0: diffs = [(tool_column[i+1] > tool_column[i]) | i in 1..J - 1]
+  } in sum(diffs);
 
 % function var JOBS0: count_tool_switches(var set of JOBS: magazine_col_set) = 
 %   let {
