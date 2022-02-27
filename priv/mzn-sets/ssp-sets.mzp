@@ -11,12 +11,14 @@
         "ssp.mzn",
         "da_silva1.dzn",
         "partial_sequence_test.mzn",
-        "partial_sequence.mzn"
+        "partial_sequence.mzn",
+        "predicates_functions.mzn"
     ],
-    "openTab": 10,
+    "openTab": 11,
     "projectFiles": [
         "da_silva1.dzn",
         "da_silva1_tlp.dzn",
+        "default.mpc",
         "partial_sequence.mzn",
         "partial_sequence_test.mzn",
         "predicates_functions.mzn",
@@ -31,7 +33,6 @@
         "tlp.mzn",
         "wst.mzn"
     ],
-    "selectedBuiltinConfigId": "org.gecode.gecode",
-    "selectedBuiltinConfigVersion": "6.3.0",
+    "selectedSolverConfigFile": "default.mpc",
     "version": 106
 }
