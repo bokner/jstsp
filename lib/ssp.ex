@@ -129,7 +129,7 @@ defmodule SSP do
       """)
   end
 
-  defp partial_sequence_model(partial_sequence) do
+  defp partial_sequence_model(partial_sequence) when is_list(partial_sequence) do
     inline_model(
     """
     partial_sequence = #{MinizincData.elixir_to_dzn(partial_sequence)};

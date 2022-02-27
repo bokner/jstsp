@@ -44,11 +44,13 @@ defmodule SSP.Results do
   end
 
   defp update_option_arg(:lower_bound, data, _rec, opts) do
-    get_lower_bound_info(data, opts, :lower_bound)
+    Keyword.get(opts, :lower_bound,
+    get_lower_bound_info(data, opts, :lower_bound))
   end
 
   defp update_option_arg(:partial_sequence, data, _rec, opts) do
-    get_lower_bound_info(data, opts, :partial_sequence)
+    Keyword.get(opts, :partial_sequence,
+    get_lower_bound_info(data, opts, :partial_sequence))
   end
 
   defp get_lower_bound_info(data, opts, field) do
