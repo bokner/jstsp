@@ -64,8 +64,8 @@ defmodule SSP.Utils do
     "predicates_functions.mzn"]
   end
 
-  def mzn_dir() do
-    Path.join(:code.priv_dir(:ssp), "mzn")
+  def mzn_dir(dir \\ "mzn") do
+    Path.join(:code.priv_dir(:ssp), dir)
   end
   def get_instance_data(file) do
     Path.extname(file) == ".dzn" && file ||
