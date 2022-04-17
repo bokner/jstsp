@@ -1,0 +1,5 @@
+maxLegLen = 9;
+numlocations = 4;
+travelTime = array2d(1..numlocations, 1..numlocations, [1,2,3,5, 4,2,3,5, 3,9,8,2, 7,7,3,2]);
+numactivities = 2;
+activityAvailable = array2d(1..numactivities, 1..numlocations, [true, true, true, true, true, false, false, false]);

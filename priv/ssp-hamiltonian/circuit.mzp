@@ -1,0 +1,14 @@
+{
+    "openFiles": [
+        "../ssp-hamiltonian/circuit_path.mzn",
+        "../ssp-hamiltonian/circuitpreds.mzn"
+    ],
+    "openTab": 1,
+    "projectFiles": [
+        "../ssp-hamiltonian/circuit_path.mzn",
+        "../ssp-hamiltonian/circuitpreds.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.3.0",
+    "version": 106
+}
