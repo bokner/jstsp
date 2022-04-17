@@ -1,0 +1,22 @@
+{
+    "openFiles": [
+        "constraints.mzn",
+        "da_silva.dzn",
+        "functions.mzn",
+        "pars.mzn",
+        "solve.mzn",
+        "vars.mzn"
+    ],
+    "openTab": 5,
+    "projectFiles": [
+        "constraints.mzn",
+        "da_silva.dzn",
+        "functions.mzn",
+        "pars.mzn",
+        "solve.mzn",
+        "vars.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.3.0",
+    "version": 106
+}
