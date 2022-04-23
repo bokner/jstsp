@@ -16,7 +16,7 @@ var JOBS: succ_end;
 constraint hpath(succ, succ_start, succ_end);
 
 constraint sequence[1] = succ_start;
-constraint sequence[J] = succ_end;
+%constraint sequence[J] = succ_end;
 
 constraint forall(s in 2..J-1)(
   sequence[s] = succ[sequence[s-1]]
@@ -26,9 +26,11 @@ constraint all_different(sequence);
 
 % Symmetry break
 %
-constraint succ_start = max_tools_job;
+constraint succ_start = arg_max(tool_count_by_job);
+% Cuts the solutions!
+%constraint succ_end = arg_min(tool_count_by_job);
 
-array[1..J-1] of var JOBS0: job_switches;
+array[1..J-1] of var 0..C: job_switches;
 
 constraint forall(j in 1..J-1) (
   job_switches[j] =  job_switches(j, j + 1)
@@ -36,7 +38,7 @@ constraint forall(j in 1..J-1) (
 
  
 %% Count tool switches using column sets
-array[TOOLS] of var JOBS0: tool_switches;
+array[TOOLS] of var TOOL_SWITCHES: tool_switches;
 
 %% Count tool switches for every tool
 constraint forall(t in TOOLS)(
@@ -44,6 +46,7 @@ constraint forall(t in TOOLS)(
 );
 
 %% Two different ways to compute cost
+
 %constraint cost = sum(job_switches);
 constraint cost = sum(tool_switches); 
   

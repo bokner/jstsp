@@ -2,6 +2,8 @@ set of int: TOOLS = 1..T;
 set of int: TOOLS0 = 0..T;
 set of int: JOBS = 1..J;
 set of int: JOBS0 = 0..J;
+set of int: TOOL_SWITCHES = %JOBS0;
+  0..ceil(J/2);
 %% Input
 int: J;
 int: T;
