@@ -1,11 +1,11 @@
 include "circuitpreds.mzn";
-int: numlocations = 4;       % number of locations
+int: numlocations;       % number of locations
 set of int: Locations = 1..numlocations; 
-int: maxLegLen = 9;     % length of longest edge in network
+int: maxLegLen;     % length of longest edge in network
 
 % travel times between locations 
 % -1 means no direct connection exists
-array[Locations,Locations] of int: travelTime = array2d(1..numlocations, 1..numlocations, [1,2,3,5, 4,2,3,5, 3,9,8,2, 7,7,3,2]); 
+array[Locations,Locations] of int: travelTime;
 
 % successor variables
 array[Locations] of var 1..numlocations+1: succ;

@@ -39,8 +39,7 @@ constraint value_precede_chain(partial_sequence, sequence);
 %;
 
 
-  
       
-function var JOBS: position_in_sequence(JOBS: value) = 
-  sum(i in index_set(sequence))(i *  (value = sequence[i])
-   );
+% function var JOBS: position_in_sequence(JOBS: value) = 
+%   sum(i in index_set(sequence))(i *  (value = sequence[i])
+%    );
