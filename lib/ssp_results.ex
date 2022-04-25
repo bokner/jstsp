@@ -8,7 +8,8 @@ defmodule SSP.Results do
     filter_fun = Keyword.get(opts, :filter, fn x -> x end)
 
     prev_results
-    |> Enum.reject(fn rec -> opts[:include_optimal] && rec.status == :optimal end)
+    #|> Enum.reject(fn rec -> #opts[:include_optimal] &&
+    #  rec.status == :optimal end)
     |> filter_fun.()
     |> tap(fn instances ->
       :erlang.put(:instance_num, length(instances))
