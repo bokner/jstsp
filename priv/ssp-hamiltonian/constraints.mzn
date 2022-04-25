@@ -5,8 +5,8 @@ include "predicates.mzn";
 include "solve.mzn";
 %include "solve_priority_search.mzn";
 
-include "all_different.mzn";
-include "link_set_to_booleans.mzn";
+include "globals.mzn";
+%include "link_set_to_booleans.mzn";
 
 array[JOBS] of var 1..J+1: succ;
 
@@ -16,7 +16,7 @@ var JOBS: succ_end;
 constraint hpath(succ, succ_start, succ_end);
 
 constraint sequence[1] = succ_start;
-%constraint sequence[J] = succ_end;
+constraint sequence[J] = succ_end;
 
 constraint forall(s in 2..J-1)(
   sequence[s] = succ[sequence[s-1]]
@@ -26,11 +26,21 @@ constraint all_different(sequence);
 
 % Symmetry break
 %
+% The sequence and it's reverse have the same cost.
+
+%constraint succ_start < succ_end;
+
+% Next 2 below may cut the solutions!
 constraint succ_start = arg_max(tool_count_by_job);
-% Cuts the solutions!
+
 %constraint succ_end = arg_min(tool_count_by_job);
 
-array[1..J-1] of var 0..C: job_switches;
+%% First job has at least the same number of tools as the last one.
+%constraint card(job_tool_sets[succ_start]) >= card(job_tool_sets[succ_end]);
+
+% TODO: range for job switches as min of (J1 symdiff J2) over all pairs J1, J2
+%
+array[1..J-1] of var 0..JOB_SWITCHES: job_switches;
 
 constraint forall(j in 1..J-1) (
   job_switches[j] =  job_switches(j, j + 1)
@@ -60,7 +70,7 @@ constraint forall(j in JOBS) (
 
 
 constraint forall(i in JOBS)(
-  card(magazine_row_sets[i]) <= C
+  card(magazine_row_sets[i]) = C
 );
 
 %% Magazine row sets (represent jobs in the magazine state)
@@ -78,6 +88,3 @@ constraint forall(t in TOOLS)(
   link_set_to_booleans(magazine_col_sets[t],
         [j < J /\ (magazine[j + 1, t] > magazine[j, t]) | j in JOBS])
 );
-
-
-

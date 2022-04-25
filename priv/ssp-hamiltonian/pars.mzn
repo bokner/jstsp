@@ -13,8 +13,7 @@ array[JOBS, TOOLS] of 0..1:  job_tools;
 int: C;      
 
 %% Auxillary
-%% tool_switches[i, j] is the number of tool switches between jobs i and j.
-array[JOBS, JOBS] of var int: tool_diffs = array2d(JOBS, JOBS, [tool_diff(i, j) | i,j in JOBS]);
+
 array[JOBS] of TOOLS: tool_count_by_job = [sum(row(job_tools, i)) | i in JOBS];
 JOBS: max_tools_job = arg_max(tool_count_by_job); 
 
@@ -25,3 +24,6 @@ constraint forall(j in JOBS)(
         [job_tools[j, t] = 1| t in TOOLS]
         )
 );
+
+%% Upper bound for job switches: max of symmetrical difference across all pairs of jobs
+0..C: JOB_SWITCHES  = max([abs(tool_diff(i, j)) | i, j in JOBS where i < j]); 
