@@ -19,4 +19,8 @@ defmodule SSP.Benchmark do
   def benchmark25x25(opts) do
     benchmark("instances/MTSP/Laporte/Tabela6/L22-3.txt", opts)
   end
+
+  def benchmark30x40x15(opts) do
+    benchmark("instances/MTSP/Catanzaro/C1-1.txt", opts)
+  end
 end

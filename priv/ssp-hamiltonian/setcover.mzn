@@ -4,10 +4,11 @@
 %% Input
 int: J;
 int: T;
+int: C;
 set of int: TOOLS = 1..T;
 set of int: JOBS = 1..J;
 array[JOBS, TOOLS] of 0..1:  job_tools;
-int: cover_size;
+int: cover_size = 3;
 
 %% Decision vars
 array[JOBS] of var 0..1: cover;
@@ -23,9 +24,13 @@ constraint set_cover(cover, job_tools);
 
 var 1..T*J: obj;
 
-constraint obj = sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
+var JOBS: cover_obj;
 
-constraint sum(cover) >= min(cover_size, J); 
+constraint cover_obj = sum(cover);
+
+constraint obj = cover_obj * T  - sum(i in TOOLS)(tool_count[i] > 1);
+
+constraint cover_obj >= min(cover_size, J); 
 
 solve minimize obj;
 

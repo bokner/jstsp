@@ -2,6 +2,7 @@ include "vars.mzn";
 include "pars.mzn";
 include "functions.mzn";
 include "predicates.mzn";
+include "symmetry_breaking.mzn";
 include "solve.mzn";
 %include "solve_priority_search.mzn";
 
@@ -24,29 +25,14 @@ constraint forall(s in 2..J-1)(
 
 constraint all_different(sequence);
 
-% Symmetry break
-%
-% The sequence and it's reverse have the same cost.
-
-%constraint succ_start < succ_end;
-
-% Next 2 below may cut the solutions!
-constraint succ_start = arg_max(tool_count_by_job);
-
-%constraint succ_end = arg_min(tool_count_by_job);
-
-%% First job has at least the same number of tools as the last one.
-%constraint card(job_tool_sets[succ_start]) >= card(job_tool_sets[succ_end]);
-
-% TODO: range for job switches as min of (J1 symdiff J2) over all pairs J1, J2
-%
-array[1..J-1] of var 0..JOB_SWITCHES: job_switches;
+%% Count job switches using row sets
+array[1..J-1] of var 0..JOB_SWITCHES: job_switches; 
 
 constraint forall(j in 1..J-1) (
   job_switches[j] =  job_switches(j, j + 1)
 );
 
- 
+
 %% Count tool switches using column sets
 array[TOOLS] of var TOOL_SWITCHES: tool_switches;
 
@@ -57,7 +43,7 @@ constraint forall(t in TOOLS)(
 
 %% Two different ways to compute cost
 
-%constraint cost = sum(job_switches);
+constraint cost = sum(job_switches);
 constraint cost = sum(tool_switches); 
   
 %% Trivial lower bound
