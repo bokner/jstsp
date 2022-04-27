@@ -2,8 +2,12 @@ set of int: TOOLS = 1..T;
 set of int: TOOLS0 = 0..T;
 set of int: JOBS = 1..J;
 set of int: JOBS0 = 0..J;
-set of int: TOOL_SWITCHES = %JOBS0;
-  0..ceil(J/2);
+
+int: tool_switches_ub = ceil(J/2);
+
+%% Upper bound for job switches: max of symmetrical difference across all pairs of jobs
+int: job_switches_ub = max([abs(tool_diff(i, j)) | i, j in JOBS where i < j]); 
+
 %% Input
 int: J;
 int: T;
@@ -25,5 +29,3 @@ constraint forall(j in JOBS)(
         )
 );
 
-%% Upper bound for job switches: max of symmetrical difference across all pairs of jobs
-0..C: JOB_SWITCHES  = max([abs(tool_diff(i, j)) | i, j in JOBS where i < j]); 

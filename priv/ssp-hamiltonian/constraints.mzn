@@ -3,6 +3,7 @@ include "pars.mzn";
 include "functions.mzn";
 include "predicates.mzn";
 include "symmetry_breaking.mzn";
+include "bounds.mzn";
 include "solve.mzn";
 %include "solve_priority_search.mzn";
 
@@ -26,7 +27,7 @@ constraint forall(s in 2..J-1)(
 constraint all_different(sequence);
 
 %% Count job switches using row sets
-array[1..J-1] of var 0..JOB_SWITCHES: job_switches; 
+array[1..J-1] of var 0..job_switches_ub: job_switches; 
 
 constraint forall(j in 1..J-1) (
   job_switches[j] =  job_switches(j, j + 1)
@@ -34,7 +35,7 @@ constraint forall(j in 1..J-1) (
 
 
 %% Count tool switches using column sets
-array[TOOLS] of var TOOL_SWITCHES: tool_switches;
+array[TOOLS] of var 0..tool_switches_ub: tool_switches;
 
 %% Count tool switches for every tool
 constraint forall(t in TOOLS)(
@@ -46,8 +47,7 @@ constraint forall(t in TOOLS)(
 constraint cost = sum(job_switches);
 constraint cost = sum(tool_switches); 
   
-%% Trivial lower bound
-constraint cost >= T - C;
+
 
 
 constraint forall(j in JOBS) (
@@ -55,7 +55,9 @@ constraint forall(j in JOBS) (
 );
 
 
-constraint forall(i in JOBS)(
+constraint card(magazine_row_sets[1]) <= C;
+
+constraint forall(i in 2..J)(
   card(magazine_row_sets[i]) = C
 );
 
