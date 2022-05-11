@@ -1,0 +1,3 @@
+PARTIAL_SEQ_SIZE = 8;
+partial_sequence = [2, 16, 6, 25, 23, 20, 3, 22];
+lower_bound = 15;

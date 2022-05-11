@@ -16,7 +16,9 @@ constraint set_cover(cover, job_tools);
 
 var 1..T*J: obj;
 
-constraint obj = sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
+constraint obj = sum(cover);
+
+%sum(cover) * T  - sum(i in TOOLS)(tool_count[i] > 1);
 
 solve minimize obj;
 
