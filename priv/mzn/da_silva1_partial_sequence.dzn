@@ -1,4 +1,5 @@
-%% Data (1st instance from da Silva et al, "Multicommodity flow model....")
+%% Data (1st instance from da Silva et al, "Multicommodity flow model...."), 
+%% with partial sequence
 N = 6;
 T = 9;
 C = 4;
@@ -10,5 +11,7 @@ job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
                   | 0, 0, 1, 0, 1, 0, 0, 1, 0
                   | 1, 1, 0, 1, 0, 0, 0, 0, 0
         |];
-        
-         
+
+
+PARTIAL_SEQ_SIZE = 3;
+partial_sequence = [3, 5, 1];         

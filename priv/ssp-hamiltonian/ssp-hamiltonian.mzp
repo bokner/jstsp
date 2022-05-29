@@ -1,0 +1,33 @@
+{
+    "openFiles": [
+        "constraints.mzn",
+        "15x15.dzn",
+        "25x25.dzn",
+        "functions.mzn",
+        "pars.mzn",
+        "predicates.mzn",
+        "setcover.mzn",
+        "solve_priority_search.mzn",
+        "solve.mzn",
+        "30x40.dzn",
+        "bounds.mzn"
+    ],
+    "openTab": 0,
+    "projectFiles": [
+        "15x15.dzn",
+        "25x25.dzn",
+        "30x40.dzn",
+        "bounds.mzn",
+        "constraints.mzn",
+        "da_silva.dzn",
+        "functions.mzn",
+        "pars.mzn",
+        "predicates.mzn",
+        "setcover.mzn",
+        "solve.mzn",
+        "solve_priority_search.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.minizinc.mip.cplex",
+    "selectedBuiltinConfigVersion": "12.10.0.0",
+    "version": 106
+}

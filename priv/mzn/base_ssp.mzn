@@ -3,8 +3,6 @@
 include "solve_definition.mzn";
 %include "solve_definition_warmup.mzn";
 
-include "hpath.mzn";
-
 %constraint sequence[1] < sequence[J];
 
 
@@ -58,27 +56,55 @@ include "globals.mzn";
 %% 'all_different' global constraint enforces job sequence to be a permutation.
 
 constraint all_different(sequence);
+% Hamiltonian path (redundant to all_different).
+include "hpath.mzn";
+
 
 %% Magazine has all the tools
 %% required by the job handled in the current step.
 %%   
 constraint forall(j in JOBS, t in TOOLS)(
     magazine[j, t] >= job_tools[sequence[j], t]
+    %(job_tools[sequence[j], t] = 1) -> (magazine[j, t] = 1)
 );
 
-%% Do not change tools  that are needed for the next job
+%% Do not remove the tools  that are needed for the next job
+
+/*
 constraint forall(j in 1..J-1, t in TOOLS)(
-  (job_tools[sequence[j + 1], t] =1 /\ job_tools[sequence[j], t] = 1) -> 
-    (magazine[j, t] = 1 /\ magazine[j+1, t] = 1)
+   (
+    (job_tools[sequence[j + 1], t] = job_tools[sequence[j], t]) -> 
+     (magazine[j+1, t] >= magazine[j, t])
+  )
+%    ((job_tools[sequence[j + 1], t] =1) -> (magazine[j, t] <= magazine[j+1, t]))
+%    /\
+%   ((job_tools[sequence[j + 1], t] = 0) -> 
+%     (magazine[j, t] >= magazine[j+1, t])
+%    )
 );
+*/
+
+
+
+%% Do not insert the tool if it's not needed for the next job
+
+% constraint forall(j in 1..J-1, t in TOOLS)(
+%   (job_tools[sequence[j + 1], t] = 0) -> 
+%     (magazine[j, t] >= magazine[j+1, t])
+% );
+
+
+array[JOBS] of var 1..C: magazine_counts = [sum(row(magazine, i)) | i in JOBS];
 
 %% The number of tools loaded into the magazine does not exceed 
 %% it's capacity
-constraint forall(i in JOBS)(
- sum(row(magazine, i)) <= C
-);
+%constraint forall(m in magazine_counts)(m <=C);
 
-constraint max([sum(row(magazine, i)) | i in JOBS]) <= C;
+constraint max(magazine_counts) = C;
+
+%constraint increasing(magazine_counts);
+
+%constraint max([sum(row(magazine, i)) | i in JOBS]) <= C;
 
 %% For every tool, count the number of switches it requires.
 %% Upper bound for individual tool switches
@@ -91,11 +117,13 @@ array[TOOLS] of var 0..tool_switches_ub: tool_switches;
 int: job_switches_ub = min(C, max([abs(tool_diff(i, j)) | i, j in JOBS where i < j])); 
 
 
+
 constraint forall(t in TOOLS) (
-  tool_switches[t] = sum(i in 1..J-1)(magazine[i+1, t] > magazine[i, t])
+  tool_switches[t] = sum(i in 1..J-1)(magazine[i+1, t]  < magazine[i, t]) 
 );
 
 %% Total number of tool switches
+
 constraint cost = sum(tool_switches); 
 
 %% Alternative counting of tool switches.
@@ -106,23 +134,32 @@ constraint cost = sum(tool_switches);
 array[1..J-1] of var 0..job_switches_ub: job_switches;
 include "predicates_functions.mzn";
 
-constraint forall(j in 1..J-1)(
-  job_switches[j] = job_switches(j, j+1)
-);
+ constraint forall(j in 1..J-1)(
+  %count_switches(j, j+1)
+   job_switches[j] = job_switches(j, j+1)
+ );
+ 
+ constraint forall(j in 1..J-1)(
+   job_switches[j] <= sum([job_tools[sequence[j+1], t] | t in TOOLS])
+ );
 
+%% LAST CHANGE
 constraint cost = sum(job_switches);
+
 
 % Trivial lower bound.
 %
 constraint cost >= T - C;
 
 %% Trivial upper bound
-constraint cost <= min(job_switches_ub * (J - 1), tool_switches_ub * min(T, 2*C)
+int: js_ub = job_switches_ub * (J - 1);
+int: ts_ub =  tool_switches_ub * min(T, 2*C);
+int: upper_bound = min(js_ub, ts_ub);
+constraint cost <= upper_bound;
 
-);
 
 %% Output
-output ["Job sequence: ", show(sequence), "\n", "Number of switches: ",  show(cost), "\n" 
-  , "js_ub:", show(job_switches_ub)
-  %,"Magazine states:", show(magazine)
-]; 
+ %output ["Job sequence: ", show(sequence), "\n", "Number of switches: ",  show(cost), "\n" 
+  % , "upper bound:", show(upper_bound), "\n"
+   %,"Magazine states:", show(magazine)
+ %]; 

@@ -1,0 +1,15 @@
+%% Data (1st instance from da Silva et al, "Multicommodity flow model...."), 
+%% with set-cover
+N = 3;
+T = 9;
+C = 4;
+
+job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
+                  %| 1, 0, 1, 0, 1, 0, 0, 0, 0 
+                  | 0, 1, 0, 0, 0, 1, 1, 1, 0
+                  %| 1, 0, 0, 0, 1, 0, 1, 0, 1
+                  | 0, 0, 1, 0, 1, 0, 0, 1, 0
+                  %| 1, 1, 0, 1, 0, 0, 0, 0, 0
+        |];
+        
+         
