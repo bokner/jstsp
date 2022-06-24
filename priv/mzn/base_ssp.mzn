@@ -1,6 +1,7 @@
 %% Base model for solving SSP (Job Sequencing and Tool Switching Problem)
 
 include "solve_definition.mzn";
+%solve maximize cost;
 %include "solve_definition_warmup.mzn";
 
 %constraint sequence[1] < sequence[J];
@@ -55,7 +56,7 @@ include "globals.mzn";
 %%
 %% 'all_different' global constraint enforces job sequence to be a permutation.
 
-constraint all_different(sequence);
+%constraint all_different(sequence);
 % Hamiltonian path (redundant to all_different).
 include "hpath.mzn";
 
@@ -144,7 +145,7 @@ include "predicates_functions.mzn";
  );
 
 %% LAST CHANGE
-constraint cost = sum(job_switches);
+%constraint cost = sum(job_switches);
 
 
 % Trivial lower bound.
@@ -153,7 +154,7 @@ constraint cost >= T - C;
 
 %% Trivial upper bound
 int: js_ub = job_switches_ub * (J - 1);
-int: ts_ub =  tool_switches_ub * min(T, 2*C);
+int: ts_ub =  tool_switches_ub * C;
 int: upper_bound = min(js_ub, ts_ub);
 constraint cost <= upper_bound;
 

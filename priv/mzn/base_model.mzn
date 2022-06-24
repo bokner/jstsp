@@ -29,7 +29,7 @@ int: tool_switches_ub = ceil(N/2);
 array[TOOLS] of var 0..tool_switches_ub: tool_switches;
 
 %% Objective - total number of tool switches
-var int: cost;
+var (T-C)..C*(N-1): cost;
 
 %% 'all_different' global constraint enforces job sequence to be a permutation.
 include "all_different.mzn";

@@ -1,8 +1,12 @@
 include "base_model.mzn";
+% Используем подпоследовательность набора работ,
+% найденную на предыдущем шаге
+array[1..3] of JOBS: partial_sequence = [3, 5, 1];
 
-int: PARTIAL_SEQ_SIZE;
-array[1..PARTIAL_SEQ_SIZE] of JOBS: partial_sequence;
-
+% value_precede_chain constraint:
+% Ограничивает основную последовательность работ
+% таким образом, что подпоследовательность сохраняет в ней свой порядок.
+%
 include "value_precede_chain.mzn";
 
 constraint value_precede_chain(partial_sequence, sequence);

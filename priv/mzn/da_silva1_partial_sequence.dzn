@@ -13,5 +13,5 @@ job_tools = [| 1, 0, 0, 1, 0, 0, 0, 1, 1
         |];
 
 
-PARTIAL_SEQ_SIZE = 3;
-partial_sequence = [3, 5, 1];         
+%PARTIAL_SEQ_SIZE = 3;
+%partial_sequence = [3, 5, 1];         
