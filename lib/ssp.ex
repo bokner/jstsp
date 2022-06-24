@@ -14,6 +14,11 @@ defmodule SSP do
     instance_file
     |> get_instance_data()
     |> run_model(opts)
+    |> then(fn {:ok, results} ->
+      results
+        {:error, error} ->
+          %{error: error}
+    end)
     |> Map.put(:instance, instance_file)
   end
 
