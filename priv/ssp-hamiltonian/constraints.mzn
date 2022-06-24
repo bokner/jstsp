@@ -55,10 +55,10 @@ constraint forall(j in JOBS) (
 );
 
 
-constraint card(magazine_row_sets[1]) <= C;
+%constraint card(magazine_row_sets[1]) <= C;
 
-constraint forall(i in 2..J)(
-  card(magazine_row_sets[i]) = C
+constraint forall(i in 1..J)(
+  card(magazine_row_sets[i]) <= C
 );
 
 %% Magazine row sets (represent jobs in the magazine state)

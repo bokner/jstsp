@@ -2,7 +2,7 @@
 constraint cost >= T - C;
 
 %% Trivial upper bound
-constraint cost <= min(job_switches_ub * (J - 1), tool_switches_ub * T); 
+constraint cost <= upper_bound; 
 
 %% Debug
 var int: upper_bound;

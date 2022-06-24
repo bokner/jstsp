@@ -8,7 +8,7 @@ defmodule SSP.Utils do
       time_limit: 300_000,
       model: standard_model(),
       mzn_dir: mzn_dir(),
-      symmetry_breaking: true
+      symmetry_breaking: false
     ]
   end
 
