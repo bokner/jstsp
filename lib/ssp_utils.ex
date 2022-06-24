@@ -75,6 +75,17 @@ defmodule SSP.Utils do
 
   end
 
+  def find_instances(instance_dir, filter_fun) do
+    Path.wildcard("#{instance_dir}/**/*.txt")
+    |> Enum.flat_map(fn file ->
+      File.dir?(file) ||
+      (
+        data = get_instance_data(file)
+        filter_fun.(data) && [data] || []
+      )
+    end)
+  end
+
   defp parse_instance_file(instance_file) do
     parsed_data =
       instance_file

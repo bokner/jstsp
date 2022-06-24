@@ -4,10 +4,10 @@
   "cubdb": {:hex, :cubdb, "1.1.0", "c1ad1816e3f343eb36c80d6700eca4d8cdf668e40d39f15228eb552e0afbc0d8", [:mix], [], "hexpm", "0fb5ac6b825b4b3ed6482aade8e5b8e761f170e010657d71a308d515aaf718a0"},
   "distance": {:hex, :distance, "0.2.2", "76f7cd6b6e21b3c1430a0776d594955baafd9ebf1133f98f62cdbb180074215a", [:mix], [], "hexpm", "e02a4b25ad5c617acaeda1b3d5b4efbe3e010eb0f95a6dedff99f8a9dfafacf1"},
   "distillery": {:hex, :distillery, "2.1.1", "f9332afc2eec8a1a2b86f22429e068ef35f84a93ea1718265e740d90dd367814", [:mix], [{:artificery, "~> 0.2", [hex: :artificery, repo: "hexpm", optional: false]}], "hexpm", "bbc7008b0161a6f130d8d903b5b3232351fccc9c31a991f8fcbf2a12ace22995"},
-  "erlexec": {:hex, :erlexec, "1.19.1", "bdd10c4f6c5f3c5c9aa31f5293681b128fab4a25a750119ef07a65f376f3c2ce", [:rebar3], [], "hexpm", "03597ae9140b4e62009e94ba0a0bbf481560146069a90a3eacd32774ea348fd0"},
-  "jason": {:hex, :jason, "1.2.2", "ba43e3f2709fd1aa1dce90aaabfd039d000469c05c56f0b8e31978e03fa39052", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "18a228f5f0058ee183f29f9eae0805c6e59d61c3b006760668d8d18ff0d12179"},
+  "erlexec": {:hex, :erlexec, "1.20.1", "27a9f39f2c27840b8306c94635190aae4d172c9b7359fa9495789f28e1d5ae89", [:rebar3], [], "hexpm", "79dbeed6ec980dd105cd502c818cf414c6d7cb10a90b5ad2734fd09977fe6dc9"},
+  "jason": {:hex, :jason, "1.3.0", "fa6b82a934feb176263ad2df0dbd91bf633d4a46ebfdffea0c8ae82953714946", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "53fc1f51255390e0ec7e50f9cb41e751c260d065dcba2bf0d08dc51a4002c2ac"},
   "parallel_stream": {:hex, :parallel_stream, "1.0.6", "b967be2b23f0f6787fab7ed681b4c45a215a81481fb62b01a5b750fa8f30f76c", [:mix], [], "hexpm", "639b2e8749e11b87b9eb42f2ad325d161c170b39b288ac8d04c4f31f8f0823eb"},
   "redbug": {:hex, :redbug, "1.2.2", "366d8961770ddc7bb5d209fbadddfa7271005487f938c087a0e385a57abfee33", [:rebar3], [], "hexpm", "b5fe7b94e487be559cb0ec1c0e938c9761205d3e91a96bf263bdf1beaebea729"},
   "rexbug": {:hex, :rexbug, "1.0.5", "e4fce59d1cb4f574b2d84181507b4782bc4b6afcb64e2cd276003c563ffef766", [:mix], [{:mix_test_watch, ">= 0.5.0", [hex: :mix_test_watch, repo: "hexpm", optional: true]}, {:redbug, "~> 1.2", [hex: :redbug, repo: "hexpm", optional: false]}], "hexpm", "13a3f180a9e490686a774725a07a21caf05735b7c012824d86960e9541aab46a"},
-  "solverl": {:git, "https://github.com/bokner/solverl.git", "9c4e973a570322a236fdb7196e51151f1e777d8a", []},
+  "solverl": {:git, "https://github.com/bokner/solverl.git", "3e0da9afc80898fa952a4201265ab3af2fc9db2b", []},
 }
