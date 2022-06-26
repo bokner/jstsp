@@ -1,0 +1,6 @@
+## Instances less than 15 jobs with no optimality (cplex, 600 secs)
+["instances/MTSP/Laporte/Tabela4/L14-1.txt",
+ "instances/MTSP/Laporte/Tabela4/L14-4.txt",
+ "instances/MTSP/Laporte/Tabela4/L14-7.txt",
+ "instances/MTSP/Laporte/Tabela4/L15-3.txt",
+ "instances/MTSP/Laporte/Tabela4/L20-9.txt"]
