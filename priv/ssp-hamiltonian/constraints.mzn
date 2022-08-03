@@ -5,6 +5,8 @@ include "predicates.mzn";
 include "symmetry_breaking.mzn";
 include "bounds.mzn";
 include "solve.mzn";
+include "ssp_output.mzn";
+
 %include "solve_priority_search.mzn";
 
 include "globals.mzn";
@@ -44,7 +46,7 @@ constraint forall(t in TOOLS)(
 
 %% Two different ways to compute cost
 
-constraint cost = sum(job_switches);
+%constraint cost = sum(job_switches);
 constraint cost = sum(tool_switches); 
   
 
@@ -58,7 +60,7 @@ constraint forall(j in JOBS) (
 %constraint card(magazine_row_sets[1]) <= C;
 
 constraint forall(i in 1..J)(
-  card(magazine_row_sets[i]) <= C
+  card(magazine_row_sets[i]) = C
 );
 
 %% Magazine row sets (represent jobs in the magazine state)
@@ -76,3 +78,25 @@ constraint forall(t in TOOLS)(
   link_set_to_booleans(magazine_col_sets[t],
         [j < J /\ (magazine[j + 1, t] > magazine[j, t]) | j in JOBS])
 );
+
+%% Additional (experimental) constraints
+%%
+
+%% Don't change magazine content if the jobs for next step are already there
+constraint forall(j in 1..J-1) (
+   job_tool_sets[sequence[j+1]] subset magazine_row_sets[j] -> 
+   magazine_row_sets[j+1] = magazine_row_sets[j]
+);
+  
+%% Don't reduce the number of tools in the magazine
+constraint forall(j in 1..J-1)(
+  card(magazine_row_sets[j]) <= card(magazine_row_sets[j+1])
+);
+
+%% KTNS
+% include "ktns.mzn";
+% constraint forall(p in 1..J-1)(
+%   ktns(p)
+% );
+
+%output [show(cost)];

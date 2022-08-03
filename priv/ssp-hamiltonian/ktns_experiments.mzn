@@ -28,20 +28,21 @@ array[1..3, 1..3] of var int: jobs
 
 %predicate ktns(var 1..J-1: step, 
 
-array[1..5] of var set of 1..10: test_sets = [{3, 7, 9}, {1, 2, 10}, {3, 4, 6}, {2, 4, 8}, {1, 6, 9}];
+array[1..6] of var set of 1..10: test_sets = [{3, 7, 9}, {1, 2, 10}, {3, 4, 6}, {2, 4, 8}, {1, 8, 9}, {}];
 
-predicate first_n_sets( int: N, int: threshold, array[int] of var set of int: sets, var set of int: first_n_sets) = 
+predicate first_n_sets( var int: N, var int: threshold, array[int] of var set of int: sets, var set of int: first_n_sets) = 
   let {
     array[int] of var  int: sorted_sets = arg_sort([min({t  | t in s where t > threshold}) | s in sets])} in 
     forall(i in index_set(sets))(
       i <= N <->
         sorted_sets[i] in first_n_sets
-    )
-  ; 
+    ); 
 
-var set of 1..5: first_n_sets; %= {2,4,5};
+var set of 1..10: first_n_sets; %= {2,4,5};
 
-    
-constraint first_n_sets(2, 4, test_sets, first_n_sets);   
+var int: L = 4;
+var int: Th = 6; 
+       
+constraint first_n_sets(L, Th, test_sets, first_n_sets);   
 
 
