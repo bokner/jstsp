@@ -4,8 +4,8 @@ include "functions.mzn";
 include "predicates.mzn";
 include "symmetry_breaking.mzn";
 include "bounds.mzn";
-include "solve.mzn";
-%include "solve_priority_search.mzn";
+%include "solve.mzn";
+include "solve_priority_search.mzn";
 
 include "globals.mzn";
 %include "link_set_to_booleans.mzn";
@@ -49,17 +49,14 @@ constraint cost = sum(tool_switches);
   
 
 
-
+%% For each job in sequence, magazine contains all required instruments.
+%% Magazine content does not exceed its capacity. 
 constraint forall(j in JOBS) (
   job_tool_sets[sequence[j]] subset magazine_row_sets[j]
+  /\ card(magazine_row_sets[j]) = C
 );
 
 
-%constraint card(magazine_row_sets[1]) <= C;
-
-constraint forall(i in 1..J)(
-  card(magazine_row_sets[i]) <= C
-);
 
 %% Magazine row sets (represent jobs in the magazine state)
 constraint forall(j in JOBS)(
